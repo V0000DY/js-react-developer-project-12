@@ -1,0 +1,27 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "SPA for chatting",
+  "main": "index.js",
+  "scripts": {
+    "start": "start-server -s ./frontend/build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V0000DY/js-react-developer-project-12.git"
+  },
+  "keywords": [
+    "chat",
+    "slack"
+  ],
+  "author": "V0000DY",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/V0000DY/js-react-developer-project-12/issues"
+  },
+  "homepage": "https://github.com/V0000DY/js-react-developer-project-12#readme",
+  "dependencies": {
+    "@hexlet/chat-server": "^1.1.8"
+  }
+}

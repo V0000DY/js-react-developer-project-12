@@ -1,5 +1,6 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { Button, Form } from 'react-bootstrap';
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
@@ -13,27 +14,58 @@ const SignupSchema = Yup.object().shape({
 });
 
 const LoginPage = () => (
-  <Formik
-    initialValues={{ username: '', password: '' }}
-    validationSchema={SignupSchema}
-    onSubmit={(values) => {
-      console.log(values); // eslint-disable-line
-    }}
-  >
-    {({ errors, touched }) => (
-      <Form>
-        <Field name="username" />
-        {errors.username && touched.username ? (
-          <div>{errors.username}</div>
-        ) : null}
-        <Field name="password" />
-        {errors.password && touched.password ? (
-          <div>{errors.password}</div>
-        ) : null}
-        <button type="submit">Submit</button>
-      </Form>
-    )}
-  </Formik>
+  <div className="container-fluid">
+    <div className="row justify-content-center pt-5">
+      <div className="col-sm-4">
+        <Formik
+          initialValues={{ username: '', password: '' }}
+          validationSchema={SignupSchema}
+          onSubmit={(values) => {
+            console.log(values); // eslint-disable-line
+          }}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleSubmit,
+          }) => (
+            <Form onSubmit={handleSubmit} className="p-3">
+              <fieldset>
+                <Form.Group>
+                  <Form.Label htmlFor="username">Username</Form.Label>
+                  <Form.Control
+                    onChange={handleChange}
+                    value={values.username}
+                    placeholder="username"
+                    name="username"
+                  />
+                  {errors.username && touched.username ? (
+                    <div>{errors.username}</div>
+                  ) : null}
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label htmlFor="passwprd">Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    onChange={handleChange}
+                    value={values.password}
+                    placeholder="password"
+                    name="password"
+                  />
+                  {errors.password && touched.password ? (
+                    <div>{errors.password}</div>
+                  ) : null}
+                </Form.Group>
+                <Button type="submit" variant="outline-primary" className="mt-3">Submit</Button>
+              </fieldset>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
+  </div>
 );
 
 export default LoginPage;

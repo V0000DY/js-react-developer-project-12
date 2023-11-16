@@ -7,7 +7,10 @@
     "build": "npm run build --prefix frontend",
     "start": "start-server -s ./frontend/build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "cd frontend && npm ci"
+    "postinstall": "cd frontend && npm ci",
+    "watch": "parcel frontend/src/index.html --open",
+    "parcel_build": "parcel build frontend/src/index.html --dist-dir=./frontend/parcel_build",
+    "parcel_start": "start-server -s ./frontend/parcel_build"
   },
   "repository": {
     "type": "git",
@@ -25,5 +28,8 @@
   "homepage": "https://github.com/V0000DY/js-react-developer-project-12#readme",
   "dependencies": {
     "@hexlet/chat-server": "^1.1.8"
+  },
+  "devDependencies": {
+    "parcel": "^2.10.2"
   }
 }

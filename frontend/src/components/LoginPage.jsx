@@ -41,6 +41,7 @@ const LoginPage = () => {
 
               try {
                 const res = await axios.post(routes.loginPath(), values);
+                console.log(`Передано values = ${JSON.stringify(values)}. Получено в ответ res.data = ${JSON.stringify(res.data)}`);
                 localStorage.setItem('userId', JSON.stringify(res.data));
                 auth.logIn();
                 const { from } = location.state;

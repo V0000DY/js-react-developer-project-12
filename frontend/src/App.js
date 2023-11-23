@@ -49,9 +49,9 @@ const App = () => (
         <Route
           path="/"
           element={(
-            <ChatRoute>
+            //<ChatRoute>
               <PublicPage />
-            </ChatRoute>
+            //</ChatRoute>
           )}
         />
       </Routes>

@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Container,
   Row,
@@ -13,6 +14,9 @@ import TopLine from './NavBarComp.jsx';
 
 import routes from '../routes.js';
 
+import { actions as channelsActions, selectors as channelsSelectors } from '../slices/channelsSlice.js';
+import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
+
 const getAuthHeader = () => {
   // @ts-ignore
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -23,23 +27,30 @@ const getAuthHeader = () => {
 };
 
 const PublicPage = () => {
-  const [content, setContent] = useState('');
+  const [currentChannelId, setCurrentChannelId] = useState();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchContent = async () => {
       const { data } = await axios.get(routes.usersPath(), { headers: getAuthHeader() });
-      setContent(data);
+      setCurrentChannelId(data.currentChannelId);
       console.log(data);
+      dispatch(channelsActions.addChannels(data.channels));
+      dispatch(messagesActions.addMessages(data.messagess));
     };
 
     fetchContent();
-  }, []);
+  }, [dispatch]);
 
-  const renderItems = (data) => {
-    if (!data) return null;
+  const channels = useSelector(channelsSelectors.selectAll);
+  const messages = useSelector(messagesSelectors.selectAll);
+
+  const renderItems = (channelsList) => {
+    if (!channelsList) return null;
 
     return (
       <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
-        {data.map(({ id, name }) => (
+        {channelsList.map(({ id, name }) => (
           <li key={id} className="nav-item w-100">
             <button type="button" className="w-100 rounded-0 text-start btn">
               <span className="me-1">#</span>
@@ -51,11 +62,10 @@ const PublicPage = () => {
     );
   };
 
-  const renderChannel = (data) => {
-    if (!data) return null;
+  const renderChannel = (channelId) => {
+    if (!channelId) return null;
 
-    const { channels, currentChannelId, messages } = data;
-    const currentChannelName = channels.find(({ id }) => id === currentChannelId).name;
+    const currentChannelName = channels.find(({ id }) => id === channelId).name;
 
     return (
       <div className="d-flex flex-column h-100">
@@ -69,10 +79,10 @@ const PublicPage = () => {
           <span className="text-muted">{`${messages.length} сообщений`}</span>
         </div>
         <div id="messages-box" className="chat-messages overflow-auto px-5">
-          {channels.map(({ id, name }) => (
+          {messages && messages.map(({ id, name }) => (
             <div key={id} className="text-break mb-2">
               <b>{name}</b>
-              :
+              {': '}
               {id}
             </div>
           ))}
@@ -135,10 +145,10 @@ const PublicPage = () => {
                 <span className="visually-hidden">+</span>
               </button>
             </div>
-            {renderItems(content.channels)}
+            {renderItems(channels)}
           </Col>
           <Col className="h-100 p-0">
-            {renderChannel(content)}
+            {renderChannel(currentChannelId)}
           </Col>
         </Row>
       </Container>

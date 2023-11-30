@@ -1,14 +1,31 @@
-import React from 'react';
+/* eslint-disable functional/no-expression-statements */
+import React, { useState} from 'react';
 import {
   Form,
   InputGroup,
 } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
+import { io } from 'socket.io-client';
+import { useSelector, useDispatch } from 'react-redux';
+import useAuth from '../hooks/index.jsx';
 import { selectors as channelsSelectors } from '../slices/channelsSlice.js';
-import { selectors as messagesSelectors } from '../slices/messagesSlice.js';
+import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
 import { uiSelector } from '../slices/uiSlice.js';
 
+const socket = io('http://localhost:5001');
+
+const emit = (socketIO, event, arg) => {
+  socketIO.timeout(2000).emit(event, arg, (err) => {
+    if (err) {
+      console.log(`При отправке события ${event} произошла ошибка ${err}. Повторная отправка через 2 секунды`);
+      emit(socketIO, event, arg);
+    }
+  });
+};
+
 const MessagesTab = () => {
+  const dispatch = useDispatch();
+  const auth = useAuth();
+  const [inputText, setInputText] = useState('');
   const channels = useSelector(channelsSelectors.selectAll);
   const messages = useSelector(messagesSelectors.selectAll);
   const channelId = useSelector(uiSelector);
@@ -16,6 +33,22 @@ const MessagesTab = () => {
   if (!channelId) return null;
 
   const currentChannelName = channels.find(({ id }) => id === channelId).name;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const message = {
+      entity: inputText,
+      username: auth.username,
+      channelId,
+    };
+    emit(socket, 'newMessage', message);
+    socket.on('newMessage', (newMessage) => {
+      dispatch(messagesActions.addMessage(newMessage));
+    });
+    setInputText('');
+  };
+
+  const onChange = (e) => setInputText(e.target.value);
 
   return (
     <div className="d-flex flex-column h-100">
@@ -29,25 +62,27 @@ const MessagesTab = () => {
         <span className="text-muted">{`${messages.length} сообщений`}</span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5">
-        {messages && messages.map(({ id, name }) => (
+        {messages && messages.map(({ id, username, entity }) => (
           <div key={id} className="text-break mb-2">
-            <b>{name}</b>
+            <b>{username}</b>
             {': '}
-            {id}
+            {entity}
           </div>
         ))}
       </div>
       <div className="mt-auto px-5 py-3">
-        <Form noValidate className="py-1 border rounded-2">
+        <Form noValidate className="py-1 border rounded-2" onSubmit={handleSubmit}>
           <InputGroup hasValidation>
             <Form.Control
               type="text"
               placeholder="Введите сообщение..."
               aria-label="Новое сообщение"
               name="body"
+              value={inputText}
+              onChange={onChange}
               className="border-0 p-0 ps-2"
             />
-            <button type="submit" disabled className="btn btn-group-vertical border-0">
+            <button type="submit" className="btn btn-group-vertical border-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"

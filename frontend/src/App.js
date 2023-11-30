@@ -18,15 +18,25 @@ import useAuth from './hooks/index.jsx';
 
 const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUserName] = useState('');
 
-  const logIn = () => setLoggedIn(true);
+  const logIn = (userName) => {
+    setLoggedIn(true);
+    setUserName(userName);
+  };
   const logOut = () => {
     localStorage.removeItem('userId');
     setLoggedIn(false);
   };
 
   return (
-    <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>
+    <AuthContext.Provider value={{
+      loggedIn,
+      username,
+      logIn,
+      logOut,
+    }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -78,6 +78,8 @@ const MessagesTab = () => {
               placeholder="Введите сообщение..."
               aria-label="Новое сообщение"
               name="body"
+              id="inputEl"
+              autoFocus
               value={inputText}
               onChange={onChange}
               className="border-0 p-0 ps-2"

@@ -19,7 +19,6 @@ import { actions as messagesActions } from '../slices/messagesSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
 
 const getAuthHeader = () => {
-  // @ts-ignore
   const userId = JSON.parse(localStorage.getItem('userId'));
 
   if (userId && userId.token) return { Authorization: `Bearer ${userId.token}` };

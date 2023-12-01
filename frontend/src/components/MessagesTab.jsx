@@ -1,5 +1,5 @@
 /* eslint-disable functional/no-expression-statements */
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   InputGroup,
@@ -15,6 +15,7 @@ const socket = io('http://localhost:5001');
 
 const emit = (socketIO, event, arg) => {
   socketIO.timeout(2000).emit(event, arg, (err) => {
+    // eslint-disable-next-line functional/no-conditional-statements
     if (err) {
       console.log(`При отправке события ${event} произошла ошибка ${err}. Повторная отправка через 2 секунды`);
       emit(socketIO, event, arg);

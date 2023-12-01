@@ -6,6 +6,7 @@ import {
 } from 'react-bootstrap';
 import { io } from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import { selectors as channelsSelectors } from '../slices/channelsSlice.js';
 import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
@@ -30,6 +31,7 @@ const MessagesTab = () => {
   const channels = useSelector(channelsSelectors.selectAll);
   const messages = useSelector(messagesSelectors.selectAll);
   const channelId = useSelector(uiSelector);
+  const { t } = useTranslation();
 
   if (!channelId) return null;
 
@@ -60,7 +62,7 @@ const MessagesTab = () => {
             {currentChannelName}
           </b>
         </p>
-        <span className="text-muted">{`${messages.length} сообщений`}</span>
+        <span className="text-muted">{t('messages.counter.count', { count: messages.length })}</span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5">
         {messages && messages.map(({ id, username, entity }) => (

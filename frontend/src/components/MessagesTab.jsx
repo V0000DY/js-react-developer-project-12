@@ -8,7 +8,7 @@ import { io } from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
-import { selectors as channelsSelectors } from '../slices/channelsSlice.js';
+import { allChannels } from '../slices/channelsSlice.js';
 import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
 import { uiSelector } from '../slices/uiSlice.js';
 
@@ -28,21 +28,22 @@ const MessagesTab = () => {
   const dispatch = useDispatch();
   const auth = useAuth();
   const [inputText, setInputText] = useState('');
-  const channels = useSelector(channelsSelectors.selectAll);
+  const channels = useSelector(allChannels);
+  const currentChannelId = useSelector(uiSelector);
   const messages = useSelector(messagesSelectors.selectAll);
-  const channelId = useSelector(uiSelector);
+  const currentMessages = messages.filter(({ channelId }) => channelId === currentChannelId);
   const { t } = useTranslation();
 
-  if (!channelId) return null;
+  if (!currentChannelId) return null;
 
-  const currentChannelName = channels.find(({ id }) => id === channelId).name;
+  const currentChannelName = channels.find(({ id }) => id === currentChannelId).name;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const message = {
       entity: inputText,
       username: auth.username,
-      channelId,
+      channelId: currentChannelId,
     };
     emit(socket, 'newMessage', message);
     socket.on('newMessage', (newMessage) => {
@@ -62,16 +63,17 @@ const MessagesTab = () => {
             {currentChannelName}
           </b>
         </p>
-        <span className="text-muted">{t('messages.counter.count', { count: messages.length })}</span>
+        <span className="text-muted">{t('messages.counter.count', { count: currentMessages.length })}</span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5">
-        {messages && messages.map(({ id, username, entity }) => (
-          <div key={id} className="text-break mb-2">
-            <b>{username}</b>
-            {': '}
-            {entity}
-          </div>
-        ))}
+        {currentMessages && currentMessages
+          .map(({ id, username, entity }) => (
+            <div key={id} className="text-break mb-2">
+              <b>{username}</b>
+              {': '}
+              {entity}
+            </div>
+          ))}
       </div>
       <div className="mt-auto px-5 py-3">
         <Form noValidate className="py-1 border rounded-2" onSubmit={handleSubmit}>

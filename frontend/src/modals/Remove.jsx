@@ -7,12 +7,14 @@ import {
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
+import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
 import { uiSelector, actions as uiActions } from '../slices/uiSlice.js';
 
 const Remove = (props) => {
   const dispatch = useDispatch();
   const currentChannelId = useSelector(uiSelector);
   const channels = useSelector(allChannels);
+  const messages = useSelector(messagesSelectors.selectAll);
   const {
     modalInfo,
     onHide,
@@ -28,6 +30,10 @@ const Remove = (props) => {
       emit(socket, 'removeChannel', removedChannel);
       socket.on('removeChannel', (channel) => {
         dispatch(channelsActions.removeChannel(channel.id));
+        const deletedMessagesIds = messages
+          .filter(({ channelId }) => channelId === channel.id)
+          .map(({ id }) => id);
+        dispatch(messagesActions.removeMessages(deletedMessagesIds));
         // eslint-disable-next-line functional/no-conditional-statements
         if (channel.id === currentChannelId) {
           dispatch(uiActions.setCurrentChannelId(channels[0].id));

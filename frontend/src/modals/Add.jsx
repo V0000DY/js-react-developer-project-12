@@ -71,7 +71,7 @@ const Add = (props) => {
             </FormControl.Feedback>
           </FormGroup>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>Отменить</Button>
+            <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>Отменить</Button>
             <Button variant="primary" type="submit">Отправить</Button>
           </div>
         </Form>

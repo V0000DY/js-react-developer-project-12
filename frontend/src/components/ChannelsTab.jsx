@@ -1,10 +1,11 @@
 /* eslint-disable functional/no-expression-statements */
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import cn from 'classnames';
 import { io } from 'socket.io-client';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import { allChannels } from '../slices/channelsSlice.js';
-import { actions as uiActions } from '../slices/uiSlice.js';
+import { actions as uiActions, uiSelector } from '../slices/uiSlice.js';
 import getModal from '../modals/index.js';
 
 const socket = io('http://localhost:5001');
@@ -30,23 +31,29 @@ const renderModal = ({
   return <Component onHide={hideModal} modalInfo={modalInfo} socket={socket} emit={emit} />;
 };
 
-const renderChannel = (id, name, removable, handleSwitchChannel, showModal) => {
+const renderChannel = (id, name, removable, currentChannelId, handleSwitchChannel, showModal) => {
+  const buttonClass = cn(
+    {
+      secondary: id === currentChannelId,
+      light: id !== currentChannelId,
+    },
+  );
   const regularChannel = (
     <li key={id} className="nav-item w-100">
-      <button type="button" className="w-100 rounded-0 text-start btn" onClick={handleSwitchChannel(id)}>
+      <Button variant={buttonClass} className="w-100 rounded-0 text-start btn" onClick={handleSwitchChannel(id)}>
         <span className="me-1">#</span>
         {name}
-      </button>
+      </Button>
     </li>
   );
   const customChannel = (
     <li key={id} className="nav-item w-100">
       <Dropdown as={ButtonGroup} className="d-flex">
-        <Button variant="secondary" className="w-100 rounded-0 text-start" onClick={handleSwitchChannel(id)}>
+        <Button variant={buttonClass} className="w-100 rounded-0 text-start btn" onClick={handleSwitchChannel(id)}>
           <span className="me-1">#</span>
           {name}
         </Button>
-        <Dropdown.Toggle split variant="secondary" id="dropdown-split-secondary" className="flex-grow-0 rounded-0" />
+        <Dropdown.Toggle split variant={buttonClass} id="dropdown-split-secondary" className="flex-grow-0 rounded-0" />
         <Dropdown.Menu>
           <Dropdown.Item href="#/action-1" onClick={() => showModal('removing', id)}>Удалить</Dropdown.Item>
           <Dropdown.Item href="#/action-2" onClick={() => showModal('renaming', id)}>Переименовать</Dropdown.Item>
@@ -61,6 +68,7 @@ const ChannelsTab = () => {
   const dispatch = useDispatch();
   const [modalInfo, setModalInfo] = useState({ type: null, channelId: null });
   const channelsList = useSelector(allChannels);
+  const currentChannelId = useSelector(uiSelector);
   if (!channelsList) return null;
 
   const showModal = (type, channelId = null) => setModalInfo({ type, channelId });
@@ -98,6 +106,7 @@ const ChannelsTab = () => {
             id,
             name,
             removable,
+            currentChannelId,
             handleChannelClick,
             showModal,
           ))}

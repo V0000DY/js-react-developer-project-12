@@ -32,7 +32,6 @@ const PublicPage = () => {
   useEffect(() => {
     const fetchContent = async () => {
       const { data } = await axios.get(routes.usersPath(), { headers: getAuthHeader() });
-      console.log(data);
       dispatch(uiActions.setCurrentChannelId(data.currentChannelId));
       dispatch(channelsActions.addChannels(data.channels));
       dispatch(messagesActions.addMessages(data.messages));

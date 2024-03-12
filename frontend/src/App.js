@@ -1,3 +1,4 @@
+/* eslint-disable functional/no-conditional-statements */
 /* eslint-disable react/jsx-no-constructed-context-values */
 /* eslint-disable functional/no-expression-statements */
 import React, { useState } from 'react';
@@ -13,12 +14,16 @@ import './App.css';
 import ErrorPage from './components/ErrorPage.jsx';
 import PublicPage from './components/PublicPage.jsx';
 import LoginPage from './components/LoginPage.jsx';
+import SignupPage from './components/SignUpPage.jsx';
 import AuthContext from './context/index.jsx';
 import useAuth from './hooks/index.jsx';
 
 const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUserName] = useState('');
+  const userId = JSON.parse(localStorage.getItem('userId'));
+  const uName = userId ? JSON.stringify(userId.username).replace(/"/g, '') : '';
+
+  const [loggedIn, setLoggedIn] = useState(!!userId);
+  const [username, setUserName] = useState(uName);
 
   const logIn = (userName) => {
     setLoggedIn(true);
@@ -50,12 +55,14 @@ const ChatRoute = ({ children }) => {
     auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
   );
 };
+
 const App = () => (
   <AuthProvider>
     <BrowserRouter>
       <Routes>
         <Route path="*" element={<ErrorPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route
           path="/"
           element={(

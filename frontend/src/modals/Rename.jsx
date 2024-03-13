@@ -10,12 +10,14 @@ import {
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
 
 const Rename = (props) => {
   const dispatch = useDispatch();
   const inputRef = useRef();
+  const { t } = useTranslation();
   const channelsNames = useSelector(allChannels).map(({ name }) => name);
 
   const {
@@ -27,7 +29,7 @@ const Rename = (props) => {
 
   const schema = yup.object().shape({
     name: yup.string()
-      .notOneOf(channelsNames, 'Канал с таким именем уже существует!'),
+      .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
   });
 
   const f = useFormik({
@@ -39,14 +41,12 @@ const Rename = (props) => {
         id: modalInfo.channelId,
         name: f.values.name,
       };
-      console.log(renamedChannel);
       emit(socket, 'renameChannel', renamedChannel);
       socket.on('renameChannel', (channel) => {
         dispatch(channelsActions.renameChannel({
           id: channel.id,
           changes: { name: channel.name },
         }));
-        console.log(channel);
         dispatch(uiActions.setCurrentChannelId(channel.id));
         onHide();
       });
@@ -61,7 +61,7 @@ const Rename = (props) => {
   return (
     <Modal show centered>
       <Modal.Header closeButton onHide={onHide}>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('modals.rename.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={f.handleSubmit}>
@@ -81,8 +81,8 @@ const Rename = (props) => {
             </FormControl.Feedback>
           </FormGroup>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>Отменить</Button>
-            <Button variant="primary" type="submit">Отправить</Button>
+            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.rename.main.resetButton')}</Button>
+            <Button variant="primary" type="submit">{t('modals.rename.main.submitButton')}</Button>
           </div>
         </Form>
       </Modal.Body>

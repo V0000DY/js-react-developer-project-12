@@ -6,6 +6,7 @@ import {
 } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
 import { uiSelector, actions as uiActions } from '../slices/uiSlice.js';
@@ -15,6 +16,8 @@ const Remove = (props) => {
   const currentChannelId = useSelector(uiSelector);
   const channels = useSelector(allChannels);
   const messages = useSelector(messagesSelectors.selectAll);
+  const { t } = useTranslation();
+
   const {
     modalInfo,
     onHide,
@@ -46,14 +49,14 @@ const Remove = (props) => {
   return (
     <Modal show centered>
       <Modal.Header closeButton onHide={onHide}>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t('modals.remove.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={f.handleSubmit}>
-          <p className="lead">Уверены?</p>
+          <p className="lead">{t('modals.remove.main.caution')}</p>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>Отменить</Button>
-            <Button variant="danger" type="submit">Удалить</Button>
+            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.remove.main.resetButton')}</Button>
+            <Button variant="danger" type="submit">{t('modals.remove.main.submitButton')}</Button>
           </div>
         </Form>
       </Modal.Body>

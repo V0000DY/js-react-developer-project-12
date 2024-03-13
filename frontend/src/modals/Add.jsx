@@ -10,19 +10,21 @@ import {
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
 
 const Add = (props) => {
-  const dispatch = useDispatch();
   const { onHide, socket, emit } = props;
+  const dispatch = useDispatch();
   const inputRef = useRef();
+  const { t } = useTranslation();
   const channelsNames = useSelector(allChannels).map(({ name }) => name);
 
   const schema = yup.object().shape({
     name: yup.string()
-      .required('Введите новое имя канала')
-      .notOneOf(channelsNames, 'Канал с таким именем уже существует!'),
+      .required(t('modals.add.yupSchema.required'))
+      .notOneOf(channelsNames, t('modals.add.yupSchema.notOneOf')),
   });
 
   const f = useFormik({
@@ -50,7 +52,7 @@ const Add = (props) => {
   return (
     <Modal show centered>
       <Modal.Header closeButton onHide={onHide}>
-        <Modal.Title>Добавить канал</Modal.Title>
+        <Modal.Title>{t('modals.add.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form noValidate onSubmit={f.handleSubmit}>
@@ -71,8 +73,8 @@ const Add = (props) => {
             </FormControl.Feedback>
           </FormGroup>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>Отменить</Button>
-            <Button variant="primary" type="submit">Отправить</Button>
+            <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.add.main.resetButton')}</Button>
+            <Button variant="primary" type="submit">{t('modals.add.main.submitButton')}</Button>
           </div>
         </Form>
       </Modal.Body>

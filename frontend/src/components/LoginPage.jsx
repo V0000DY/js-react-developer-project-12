@@ -15,31 +15,33 @@ import {
   Form,
 } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import TopLine from './NavBarComp.jsx';
 import useAuth from '../hooks/index.jsx';
 import routes from '../routes.js';
 import FormikInput from './FormikInput.js';
 
-const initialValues = {
-  username: '',
-  password: '',
-};
-
-const validationSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(2, 'Минимум 2 буквы')
-    .max(50, 'Максимум 50 букв')
-    .required('Обязательное поле'),
-  password: Yup.string()
-    .min(4, 'Минимум 4 буквы')
-    .max(50, 'Максимум 50 букв')
-    .required('Обязательное поле'),
-});
-
 const LoginPage = () => {
   const auth = useAuth();
   const inputRef = useRef();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const initialValues = {
+    username: '',
+    password: '',
+  };
+
+  const validationSchema = Yup.object().shape({
+    username: Yup.string()
+      .min(2, t('loginPage.yupSchema.username.min'))
+      .max(50, t('loginPage.yupSchema.username.max'))
+      .required(t('loginPage.yupSchema.username.required')),
+    password: Yup.string()
+      .min(4, t('loginPage.yupSchema.password.min'))
+      .max(50, t('loginPage.yupSchema.password.max'))
+      .required(t('loginPage.yupSchema.password.required')),
+  });
 
   const onSubmit = async (values, formikBag) => {
     try {
@@ -49,12 +51,12 @@ const LoginPage = () => {
       navigate('/', { replace: false });
     } catch (err) {
       if (err.isAxiosError && err.response.status === 409) {
-        formikBag.setFieldError('username', 'Пользователь с таким именем уже существует');
+        formikBag.setFieldError('username', t('loginPage.errors.axiosErrors.409'));
         inputRef.current.select();
         return;
       }
       if (err.isAxiosError && err.response.status === 401) {
-        formikBag.setFieldError('password', 'Ошибка авторизации: Неверная пара пароль + пользователь');
+        formikBag.setFieldError('password', t('loginPage.errors.axiosErrors.401'));
         inputRef.current.select();
         return;
       }
@@ -87,18 +89,18 @@ const LoginPage = () => {
                       onSubmit={handleSubmit}
                       className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
-                      <h1 className="text-center mb-4">Войти</h1>
-                      <FormikInput name="username" label="Ваш ник" className="mb-3" autoComplete="username" ref={inputRef} />
-                      <FormikInput name="password" label="Пароль" className="mb-4" autoComplete="current-password" type="password" />
-                      <Button type="submit" variant="outline-primary" className="w-100 mb-3">Войти</Button>
+                      <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>
+                      <FormikInput name="username" label={t('loginPage.main.inputs.username')} className="mb-3" autoComplete="username" ref={inputRef} />
+                      <FormikInput name="password" label={t('loginPage.main.inputs.password')} className="mb-4" autoComplete="current-password" type="password" />
+                      <Button type="submit" variant="outline-primary" className="w-100 mb-3">{t('loginPage.main.submitButton')}</Button>
                     </Form>
                   )}
                 </Formik>
               </CardBody>
               <CardFooter className="p-4">
                 <div className="text-center">
-                  <span>Нет аккаунта?</span>
-                  <Link to="/signup">Регистрация</Link>
+                  <span>{t('loginPage.main.bottom.question')}</span>
+                  <Link to="/signup">{t('loginPage.main.bottom.registration')}</Link>
                 </div>
               </CardFooter>
             </Card>

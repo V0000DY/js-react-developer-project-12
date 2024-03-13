@@ -14,16 +14,6 @@ import { uiSelector } from '../slices/uiSlice.js';
 
 const socket = io('http://localhost:5001');
 
-const emit = (socketIO, event, arg) => {
-  socketIO.timeout(2000).emit(event, arg, (err) => {
-    // eslint-disable-next-line functional/no-conditional-statements
-    if (err) {
-      console.log(`При отправке события ${event} произошла ошибка ${err}. Повторная отправка через 2 секунды`);
-      emit(socketIO, event, arg);
-    }
-  });
-};
-
 const MessagesTab = () => {
   const dispatch = useDispatch();
   const auth = useAuth();
@@ -37,6 +27,16 @@ const MessagesTab = () => {
   if (!currentChannelId) return null;
 
   const currentChannelName = channels.find(({ id }) => id === currentChannelId).name;
+
+  const emit = (socketIO, event, arg) => {
+    socketIO.timeout(2000).emit(event, arg, (err) => {
+      // eslint-disable-next-line functional/no-conditional-statements
+      if (err) {
+        console.log(t('messagesTab.errors.socketIoError', { evt: event, error: err }));
+        emit(socketIO, event, arg);
+      }
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,7 +63,7 @@ const MessagesTab = () => {
             {currentChannelName}
           </b>
         </p>
-        <span className="text-muted">{t('messages.counter.count', { count: currentMessages.length })}</span>
+        <span className="text-muted">{t('messagesTab.counter.count', { count: currentMessages.length })}</span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5">
         {currentMessages && currentMessages
@@ -80,8 +80,8 @@ const MessagesTab = () => {
           <InputGroup hasValidation>
             <Form.Control
               type="text"
-              placeholder="Введите сообщение..."
-              aria-label="Новое сообщение"
+              placeholder={t('messagesTab.input.placeholder')}
+              aria-label={t('messagesTab.input.aria_label')}
               name="body"
               id="inputEl"
               autoFocus
@@ -102,7 +102,7 @@ const MessagesTab = () => {
                   d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
                 />
               </svg>
-              <span className="visually-hidden">Отправить</span>
+              <span className="visually-hidden">{t('messagesTab.input.sendButton')}</span>
             </button>
           </InputGroup>
         </Form>

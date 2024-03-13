@@ -1,11 +1,17 @@
-const ErrorPage = () => (
-  <div className="container-fluid">
-    <div className="row justify-content-center pt-5">
-      <div className="col-sm-4">
-        <h1>Error 404. Page not found!</h1>
+import { useTranslation } from 'react-i18next';
+
+const ErrorPage = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="container-fluid">
+      <div className="row justify-content-center pt-5">
+        <div className="col-sm-4">
+          <h1>{t('errorPage.main.title')}</h1>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ErrorPage;

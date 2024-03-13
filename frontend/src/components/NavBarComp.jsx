@@ -6,11 +6,13 @@ import {
   Container,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 
 const TopLine = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const userId = JSON.parse(localStorage.getItem('userId'));
 
   const onLogOut = () => {
@@ -21,8 +23,8 @@ const TopLine = () => {
   return (
     <Navbar className="shadow-sm navbar-expand-lg bg-white">
       <Container>
-        <Navbar.Brand href="/">Hexlet Chat</Navbar.Brand>
-        {userId && <Button onClick={onLogOut}>Выйти</Button>}
+        <Navbar.Brand href="/">{t('navBarComp.title')}</Navbar.Brand>
+        {userId && <Button onClick={onLogOut}>{t('navBarComp.logOutButton')}</Button>}
       </Container>
     </Navbar>
   );

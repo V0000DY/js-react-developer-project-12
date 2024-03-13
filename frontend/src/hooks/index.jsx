@@ -1,4 +1,3 @@
-/* eslint-disable functional/no-expression-statements */
 import { useContext } from 'react';
 
 import authContext from '../context/index.jsx';

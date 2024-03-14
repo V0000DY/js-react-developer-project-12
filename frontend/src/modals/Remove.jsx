@@ -4,7 +4,7 @@ import {
   Form,
   Button,
 } from 'react-bootstrap';
-import { useFormik } from 'formik';
+import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
@@ -24,9 +24,11 @@ const Remove = (props) => {
     socket,
     emit,
   } = props;
-  const f = useFormik({
-    initialValues: {},
-    onSubmit: () => {
+
+  const initialValues = {};
+
+  const onSubmit = async () => {
+    try {
       const removedChannel = {
         id: modalInfo.channelId,
       };
@@ -43,8 +45,14 @@ const Remove = (props) => {
         }
         onHide();
       });
-    },
-  });
+    } catch (err) {
+      if (err) {
+        console.log(`В модуле Remove.jsx ошибка = ${err}`);
+        return;
+      }
+      throw err;
+    }
+  };
 
   return (
     <Modal show centered>
@@ -52,13 +60,20 @@ const Remove = (props) => {
         <Modal.Title>{t('modals.remove.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={f.handleSubmit}>
-          <p className="lead">{t('modals.remove.main.caution')}</p>
-          <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.remove.main.resetButton')}</Button>
-            <Button variant="danger" type="submit">{t('modals.remove.main.submitButton')}</Button>
-          </div>
-        </Form>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+        >
+          {({ handleSubmit }) => (
+            <Form onSubmit={handleSubmit}>
+              <p className="lead">{t('modals.remove.main.caution')}</p>
+              <div className="d-flex justify-content-end">
+                <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.remove.main.resetButton')}</Button>
+                <Button variant="danger" type="submit">{t('modals.remove.main.submitButton')}</Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </Modal.Body>
     </Modal>
   );

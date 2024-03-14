@@ -3,37 +3,38 @@ import React, { useRef, useEffect } from 'react';
 import {
   Modal,
   Form,
-  FormGroup,
-  FormControl,
   Button,
 } from 'react-bootstrap';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
+import FormikInput from '../components/FormikInput.js';
 
 const Add = (props) => {
-  const { onHide, socket, emit } = props;
   const dispatch = useDispatch();
   const inputRef = useRef();
   const { t } = useTranslation();
   const channelsNames = useSelector(allChannels).map(({ name }) => name);
 
-  const schema = yup.object().shape({
-    name: yup.string()
+  const { onHide, socket, emit } = props;
+
+  const initialValues = {
+    channelName: '',
+  };
+
+  const validationSchema = Yup.object().shape({
+    channelName: Yup.string()
       .required(t('modals.add.yupSchema.required'))
       .notOneOf(channelsNames, t('modals.add.yupSchema.notOneOf')),
   });
 
-  const f = useFormik({
-    initialValues: {
-      name: '',
-    },
-    onSubmit: () => {
+  const onSubmit = async (values) => {
+    try {
       const channel = {
-        name: f.values.name,
+        name: values.channelName,
       };
       emit(socket, 'newChannel', channel);
       socket.on('newChannel', (newChannel) => {
@@ -41,9 +42,14 @@ const Add = (props) => {
         dispatch(uiActions.setCurrentChannelId(newChannel.id));
         onHide();
       });
-    },
-    validationSchema: schema,
-  });
+    } catch (err) {
+      if (err) {
+        console.log(`В модуле Add.jsx ошибка = ${err}`);
+        return;
+      }
+      throw err;
+    }
+  };
 
   useEffect(() => {
     inputRef.current.focus();
@@ -55,28 +61,28 @@ const Add = (props) => {
         <Modal.Title>{t('modals.add.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate onSubmit={f.handleSubmit}>
-          <FormGroup>
-            <FormControl
-              required
-              ref={inputRef}
-              name="name"
-              onChange={f.handleChange}
-              onBlur={f.handleBlur}
-              value={f.values.name}
-              data-testid="input-name"
-              className="mb-2"
-              isInvalid={!!f.errors.name}
-            />
-            <FormControl.Feedback type="invalid">
-              {f.errors.name}
-            </FormControl.Feedback>
-          </FormGroup>
-          <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.add.main.resetButton')}</Button>
-            <Button variant="primary" type="submit">{t('modals.add.main.submitButton')}</Button>
-          </div>
-        </Form>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
+        >
+          {({ handleSubmit }) => (
+            <Form onSubmit={handleSubmit}>
+              <FormikInput
+                name="channelName"
+                label={t('modals.add.main.input')}
+                className="mb-2"
+                autoComplete="channelName"
+                placeholder="channelName"
+                ref={inputRef}
+              />
+              <div className="d-flex justify-content-end">
+                <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.add.main.resetButton')}</Button>
+                <Button variant="primary" type="submit">{t('modals.add.main.submitButton')}</Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </Modal.Body>
     </Modal>
   );

@@ -3,16 +3,15 @@ import React, { useRef, useEffect } from 'react';
 import {
   Modal,
   Form,
-  FormGroup,
-  FormControl,
   Button,
 } from 'react-bootstrap';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
+import FormikInput from '../components/FormikInput.js';
 
 const Rename = (props) => {
   const dispatch = useDispatch();
@@ -27,19 +26,20 @@ const Rename = (props) => {
     emit,
   } = props;
 
-  const schema = yup.object().shape({
-    name: yup.string()
+  const initialValues = {
+    channelName: '',
+  };
+
+  const validationSchema = Yup.object().shape({
+    channelName: Yup.string()
       .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
   });
 
-  const f = useFormik({
-    initialValues: {
-      name: '',
-    },
-    onSubmit: () => {
+  const onSubmit = async (values) => {
+    try {
       const renamedChannel = {
         id: modalInfo.channelId,
-        name: f.values.name,
+        name: values.channelName,
       };
       emit(socket, 'renameChannel', renamedChannel);
       socket.on('renameChannel', (channel) => {
@@ -50,9 +50,14 @@ const Rename = (props) => {
         dispatch(uiActions.setCurrentChannelId(channel.id));
         onHide();
       });
-    },
-    validationSchema: schema,
-  });
+    } catch (err) {
+      if (err) {
+        console.log(`В модуле Rename.jsx ошибка = ${err}`);
+        return;
+      }
+      throw err;
+    }
+  };
 
   useEffect(() => {
     inputRef.current.focus();
@@ -64,27 +69,28 @@ const Rename = (props) => {
         <Modal.Title>{t('modals.rename.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={f.handleSubmit}>
-          <FormGroup>
-            <FormControl
-              ref={inputRef}
-              name="name"
-              onChange={f.handleChange}
-              onBlur={f.handleBlur}
-              value={f.values.name}
-              data-testid="input-name"
-              className="mb-2"
-              isInvalid={!!f.errors.name}
-            />
-            <FormControl.Feedback type="invalid">
-              {f.errors.name}
-            </FormControl.Feedback>
-          </FormGroup>
-          <div className="d-flex justify-content-end">
-            <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.rename.main.resetButton')}</Button>
-            <Button variant="primary" type="submit">{t('modals.rename.main.submitButton')}</Button>
-          </div>
-        </Form>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
+        >
+          {({ handleSubmit }) => (
+            <Form onSubmit={handleSubmit}>
+              <FormikInput
+                name="channelName"
+                label={t('modals.rename.main.input')}
+                className="mb-2"
+                autoComplete="channelName"
+                placeholder="channelName"
+                ref={inputRef}
+              />
+              <div className="d-flex justify-content-end">
+                <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.rename.main.resetButton')}</Button>
+                <Button variant="primary" type="submit">{t('modals.rename.main.submitButton')}</Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </Modal.Body>
     </Modal>
   );

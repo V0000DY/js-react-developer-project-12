@@ -36,6 +36,7 @@ const ru = {
         },
         main: {
           title: 'Добавить канал',
+          input: 'Введите имя канала',
           resetButton: 'Отменить',
           submitButton: 'Отправить',
         },
@@ -46,6 +47,7 @@ const ru = {
         },
         main: {
           title: 'Переименовать канал',
+          input: 'Введите новое имя канала',
           resetButton: 'Отменить',
           submitButton: 'Отправить',
         },

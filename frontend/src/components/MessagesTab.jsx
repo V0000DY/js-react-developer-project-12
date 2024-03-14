@@ -29,10 +29,13 @@ const MessagesTab = () => {
   const currentChannelName = channels.find(({ id }) => id === currentChannelId).name;
 
   const emit = (socketIO, event, arg) => {
-    socketIO.timeout(2000).emit(event, arg, (err) => {
+    socketIO.timeout(5000).emit(event, arg, (err) => {
       // eslint-disable-next-line functional/no-conditional-statements
       if (err) {
-        console.log(t('messagesTab.errors.socketIoError', { evt: event, error: err }));
+        auth.notify({
+          message: t('messagesTab.errors.socketIoError', { evt: event, error: err }),
+          type: 'error',
+        });
         emit(socketIO, event, arg);
       }
     });

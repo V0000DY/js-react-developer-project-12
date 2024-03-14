@@ -10,6 +10,8 @@ import {
   useLocation,
 } from 'react-router-dom';
 import './App.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import ErrorPage from './components/ErrorPage.jsx';
 import PublicPage from './components/PublicPage.jsx';
@@ -33,6 +35,30 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     setLoggedIn(false);
   };
+  const notify = ({ message, type }) => {
+    const props = {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    };
+    switch (type) {
+      case 'info':
+        return toast.info(message, props);
+      case 'success':
+        return toast.success(message, props);
+      case 'warning':
+        return toast.warn(message, props);
+      case 'error':
+        return toast.error(message, props);
+      default:
+        return toast(message, props);
+    }
+  };
 
   return (
     <AuthContext.Provider value={{
@@ -40,6 +66,7 @@ const AuthProvider = ({ children }) => {
       username,
       logIn,
       logOut,
+      notify,
     }}
     >
       {children}
@@ -57,23 +84,26 @@ const ChatRoute = ({ children }) => {
 };
 
 const App = () => (
-  <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="*" element={<ErrorPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route
-          path="/"
-          element={(
-            <ChatRoute>
-              <PublicPage />
-            </ChatRoute>
-          )}
-        />
-      </Routes>
-    </BrowserRouter>
-  </AuthProvider>
+  <>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="*" element={<ErrorPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route
+            path="/"
+            element={(
+              <ChatRoute>
+                <PublicPage />
+              </ChatRoute>
+            )}
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+    <ToastContainer limit={4} />
+  </>
 );
 
 export default App;

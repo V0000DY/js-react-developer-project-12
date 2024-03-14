@@ -12,8 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
 import FormikInput from '../components/FormikInput.js';
+import useAuth from '../hooks/index.jsx';
 
 const Rename = (props) => {
+  const auth = useAuth();
   const dispatch = useDispatch();
   const inputRef = useRef();
   const { t } = useTranslation();
@@ -35,8 +37,9 @@ const Rename = (props) => {
       .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values, actions) => {
     try {
+      console.log('Переименование сработало!');
       const renamedChannel = {
         id: modalInfo.channelId,
         name: values.channelName,
@@ -48,11 +51,21 @@ const Rename = (props) => {
           changes: { name: channel.name },
         }));
         dispatch(uiActions.setCurrentChannelId(channel.id));
-        onHide();
+        console.log(`Socket передал данные и получил channel id = ${channel.id}`);
+        console.log(`Значение values = ${JSON.stringify(values, null, 2)}`);
+        console.log(`Значение actions = ${JSON.stringify(actions, null, 2)}`);
+      });
+      onHide();
+      auth.notify({
+        message: t('modals.rename.toasts.success'),
+        type: 'success',
       });
     } catch (err) {
       if (err) {
-        console.log(`В модуле Rename.jsx ошибка = ${err}`);
+        auth.notify({
+          message: t('modals.rename.toasts.error') + err,
+          type: 'error',
+        });
         return;
       }
       throw err;

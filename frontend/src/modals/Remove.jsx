@@ -10,8 +10,10 @@ import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as messagesActions, selectors as messagesSelectors } from '../slices/messagesSlice.js';
 import { uiSelector, actions as uiActions } from '../slices/uiSlice.js';
+import useAuth from '../hooks/index.jsx';
 
 const Remove = (props) => {
+  const auth = useAuth();
   const dispatch = useDispatch();
   const currentChannelId = useSelector(uiSelector);
   const channels = useSelector(allChannels);
@@ -43,11 +45,18 @@ const Remove = (props) => {
         if (channel.id === currentChannelId) {
           dispatch(uiActions.setCurrentChannelId(channels[0].id));
         }
-        onHide();
+      });
+      onHide();
+      auth.notify({
+        message: t('modals.remove.toasts.success'),
+        type: 'success',
       });
     } catch (err) {
       if (err) {
-        console.log(`В модуле Remove.jsx ошибка = ${err}`);
+        auth.notify({
+          message: t('modals.remove.toasts.error') + err,
+          type: 'error',
+        });
         return;
       }
       throw err;

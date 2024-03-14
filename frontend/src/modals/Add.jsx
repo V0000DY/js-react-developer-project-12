@@ -12,8 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { allChannels, actions as channelsActions } from '../slices/channelsSlice.js';
 import { actions as uiActions } from '../slices/uiSlice.js';
 import FormikInput from '../components/FormikInput.js';
+import useAuth from '../hooks/index.jsx';
 
 const Add = (props) => {
+  const auth = useAuth();
   const dispatch = useDispatch();
   const inputRef = useRef();
   const { t } = useTranslation();
@@ -40,11 +42,18 @@ const Add = (props) => {
       socket.on('newChannel', (newChannel) => {
         dispatch(channelsActions.addChannel(newChannel));
         dispatch(uiActions.setCurrentChannelId(newChannel.id));
-        onHide();
+      });
+      onHide();
+      auth.notify({
+        message: t('modals.add.toasts.success'),
+        type: 'success',
       });
     } catch (err) {
       if (err) {
-        console.log(`В модуле Add.jsx ошибка = ${err}`);
+        auth.notify({
+          message: t('modals.add.toasts.error') + err,
+          type: 'error',
+        });
         return;
       }
       throw err;

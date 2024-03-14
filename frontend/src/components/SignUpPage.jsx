@@ -52,13 +52,15 @@ const SignupPage = () => {
       auth.logIn(values.username);
       navigate('/', { replace: false });
     } catch (err) {
-      if (err.isAxiosError && err.response.status === 409) {
-        formikBag.setFieldError('username', t('signupPage.errors.axiosErrors.409'));
-        inputRef.current.select();
+      if (err.isAxiosError && err.code === 'ERR_NETWORK') {
+        auth.notify({
+          message: t('signupPage.errors.axiosErrors.ERR_NETWORK'),
+          type: 'error',
+        });
         return;
       }
-      if (err.isAxiosError && err.response.status === 401) {
-        formikBag.setFieldError('username', t('signupPage.errors.axiosErrors.401'));
+      if (err.isAxiosError && err.response.status === 409) {
+        formikBag.setFieldError('username', t('signupPage.errors.axiosErrors.409'));
         inputRef.current.select();
         return;
       }

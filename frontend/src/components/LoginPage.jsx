@@ -50,9 +50,11 @@ const LoginPage = () => {
       auth.logIn(values.username);
       navigate('/', { replace: false });
     } catch (err) {
-      if (err.isAxiosError && err.response.status === 409) {
-        formikBag.setFieldError('username', t('loginPage.errors.axiosErrors.409'));
-        inputRef.current.select();
+      if (err.isAxiosError && err.code === 'ERR_NETWORK') {
+        auth.notify({
+          message: t('loginPage.errors.axiosErrors.ERR_NETWORK'),
+          type: 'error',
+        });
         return;
       }
       if (err.isAxiosError && err.response.status === 401) {

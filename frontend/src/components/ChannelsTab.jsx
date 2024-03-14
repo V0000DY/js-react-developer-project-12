@@ -8,10 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { allChannels } from '../slices/channelsSlice.js';
 import { actions as uiActions, uiSelector } from '../slices/uiSlice.js';
 import getModal from '../modals/index.js';
+import useAuth from '../hooks/index.jsx';
 
 const socket = io('http://localhost:5001');
 
 const ChannelsTab = () => {
+  const auth = useAuth();
   const dispatch = useDispatch();
   const [modalInfo, setModalInfo] = useState({ type: null, channelId: null });
   const channelsList = useSelector(allChannels);
@@ -21,10 +23,13 @@ const ChannelsTab = () => {
   if (!channelsList) return null;
 
   const emit = (socketIO, event, arg) => {
-    socketIO.timeout(2000).emit(event, arg, (err) => {
+    socketIO.timeout(5000).emit(event, arg, (err) => {
       // eslint-disable-next-line functional/no-conditional-statements
       if (err) {
-        console.log(t('channelsTab.errors.socketIoError', { evt: event, error: err }));
+        auth.notify({
+          message: t('channelsTab.errors.socketIoError', { evt: event, error: err }),
+          type: 'error',
+        });
         emit(socketIO, event, arg);
       }
     });

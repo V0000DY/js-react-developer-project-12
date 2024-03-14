@@ -72,9 +72,9 @@ const MessagesTab = () => {
         {currentMessages && currentMessages
           .map(({ id, username, entity }) => (
             <div key={id} className="text-break mb-2">
-              <b>{username}</b>
+              <b>{auth.filterClean(username)}</b>
               {': '}
-              {entity}
+              {auth.filterClean(entity)}
             </div>
           ))}
       </div>

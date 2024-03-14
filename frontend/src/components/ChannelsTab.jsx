@@ -65,7 +65,7 @@ const ChannelsTab = () => {
         <Dropdown as={ButtonGroup} className="d-flex">
           <Button variant={buttonClass} className="w-100 rounded-0 text-start btn" onClick={handleSwitchChannel(id)}>
             <span className="me-1">#</span>
-            {name}
+            {auth.filterClean(name)}
           </Button>
           <Dropdown.Toggle split variant={buttonClass} id="dropdown-split-secondary" className="flex-grow-0 rounded-0" />
           <Dropdown.Menu>

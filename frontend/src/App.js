@@ -23,6 +23,13 @@ import useAuth from './hooks/index.jsx';
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
   const uName = userId ? JSON.stringify(userId.username).replace(/"/g, '') : '';
+  const filter = require('leo-profanity');
+
+  filter.list();
+  filter.clearList();
+  filter.add(filter.getDictionary('en'));
+  filter.add(filter.getDictionary('ru'));
+  filter.list();
 
   const [loggedIn, setLoggedIn] = useState(!!userId);
   const [username, setUserName] = useState(uName);
@@ -31,10 +38,12 @@ const AuthProvider = ({ children }) => {
     setLoggedIn(true);
     setUserName(userName);
   };
+
   const logOut = () => {
     localStorage.removeItem('userId');
     setLoggedIn(false);
   };
+
   const notify = ({ message, type }) => {
     const props = {
       position: 'top-right',
@@ -60,6 +69,8 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const filterClean = (phrase) => filter.clean(phrase);
+
   return (
     <AuthContext.Provider value={{
       loggedIn,
@@ -67,6 +78,7 @@ const AuthProvider = ({ children }) => {
       logIn,
       logOut,
       notify,
+      filterClean,
     }}
     >
       {children}

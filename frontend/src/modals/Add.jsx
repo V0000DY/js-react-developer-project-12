@@ -20,7 +20,6 @@ const Add = (props) => {
   const inputRef = useRef();
   const { t } = useTranslation();
   const channelsNames = useSelector(allChannels).map(({ name }) => name);
-
   const { onHide, socket, emit } = props;
 
   const initialValues = {

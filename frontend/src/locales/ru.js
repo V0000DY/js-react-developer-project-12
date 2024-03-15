@@ -76,6 +76,8 @@ const ru = {
     navBarComp: {
       title: 'Hexlet Chat',
       logOutButton: 'Выйти',
+      toggleRuLang: 'Русский',
+      toggleEnLang: 'Английский',
     },
     signupPage: {
       yupSchema: {

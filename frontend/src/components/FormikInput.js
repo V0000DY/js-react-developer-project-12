@@ -11,6 +11,7 @@ const FormikInput = forwardRef((props, ref) => {
     ...rest
   } = props;
   const [field, meta] = useField(name);
+
   return (
     <Form.Group>
       <FloatingLabel label={label} className={className}>

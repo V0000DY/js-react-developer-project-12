@@ -12,6 +12,7 @@ import {
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import filter from 'leo-profanity';
 
 import ErrorPage from './components/ErrorPage.jsx';
 import PublicPage from './components/PublicPage.jsx';
@@ -23,7 +24,6 @@ import useAuth from './hooks/index.jsx';
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
   const uName = userId ? JSON.stringify(userId.username).replace(/"/g, '') : '';
-  const filter = require('leo-profanity');
 
   filter.list();
   filter.clearList();

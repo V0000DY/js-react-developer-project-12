@@ -2,6 +2,7 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 /* eslint-disable functional/no-expression-statements */
 import React, { useState } from 'react';
+import { Provider, ErrorBoundary } from '@rollbar/react';
 import {
   BrowserRouter,
   Routes,
@@ -20,6 +21,11 @@ import LoginPage from './components/LoginPage.jsx';
 import SignupPage from './components/SignUpPage.jsx';
 import AuthContext from './context/index.jsx';
 import useAuth from './hooks/index.jsx';
+
+const rollbarConfig = {
+  accessToken: 'c3f89b1df4d9468daf344eadcc738d8a',
+  environment: 'production',
+};
 
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -96,26 +102,28 @@ const ChatRoute = ({ children }) => {
 };
 
 const App = () => (
-  <>
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="*" element={<ErrorPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route
-            path="/"
-            element={(
-              <ChatRoute>
-                <PublicPage />
-              </ChatRoute>
-            )}
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-    <ToastContainer limit={4} />
-  </>
+  <Provider config={rollbarConfig}>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<ErrorPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route
+              path="/"
+              element={(
+                <ChatRoute>
+                  <PublicPage />
+                </ChatRoute>
+              )}
+            />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+      <ToastContainer limit={4} />
+    </ErrorBoundary>
+  </Provider>
 );
 
 export default App;

@@ -77,7 +77,7 @@ const Add = (props) => {
           {({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <FormikInput
-                name="channelName"
+                controlId="channelName"
                 label={t('modals.add.main.input')}
                 className="mb-2"
                 autoComplete="channelName"

@@ -92,8 +92,8 @@ const LoginPage = () => {
                       className="col-12 col-md-6 mt-3 mt-mb-0"
                     >
                       <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>
-                      <FormikInput name="username" label={t('loginPage.main.inputs.username')} className="mb-3" autoComplete="username" ref={inputRef} />
-                      <FormikInput name="password" label={t('loginPage.main.inputs.password')} className="mb-4" autoComplete="current-password" type="password" />
+                      <FormikInput controlId="username" label={t('loginPage.main.inputs.username')} className="mb-3" autoComplete="username" ref={inputRef} placeholder="Type your name" />
+                      <FormikInput controlId="password" label={t('loginPage.main.inputs.password')} className="mb-4" autoComplete="current-password" type="password" placeholder="Type your password" />
                       <Button type="submit" variant="outline-primary" className="w-100 mb-3">{t('loginPage.main.submitButton')}</Button>
                     </Form>
                   )}

@@ -21,12 +21,6 @@ const ErrorPage = () => {
         </Row>
       </Container>
     </div>
-    // <div className="container-fluid">
-    //   <div className="row justify-content-center pt-5">
-    //     <div className="col-sm-4">
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

@@ -37,7 +37,7 @@ const Rename = (props) => {
       .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
   });
 
-  const onSubmit = async (values, actions) => {
+  const onSubmit = async (values) => {
     try {
       console.log('Переименование сработало!');
       const renamedChannel = {
@@ -51,9 +51,6 @@ const Rename = (props) => {
           changes: { name: channel.name },
         }));
         dispatch(uiActions.setCurrentChannelId(channel.id));
-        console.log(`Socket передал данные и получил channel id = ${channel.id}`);
-        console.log(`Значение values = ${JSON.stringify(values, null, 2)}`);
-        console.log(`Значение actions = ${JSON.stringify(actions, null, 2)}`);
       });
       onHide();
       auth.notify({
@@ -90,7 +87,7 @@ const Rename = (props) => {
           {({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <FormikInput
-                name="channelName"
+                controlId="channelName"
                 label={t('modals.rename.main.input')}
                 className="mb-2"
                 autoComplete="channelName"

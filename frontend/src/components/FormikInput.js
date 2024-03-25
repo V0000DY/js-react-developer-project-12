@@ -5,19 +5,22 @@ import { Form, FloatingLabel } from 'react-bootstrap';
 
 const FormikInput = forwardRef((props, ref) => {
   const {
-    name,
     label,
     className,
+    controlId,
     ...rest
   } = props;
-  const [field, meta] = useField(name);
+  const [field, meta] = useField(controlId);
 
   return (
     <Form.Group>
-      <FloatingLabel label={label} className={className}>
+      <FloatingLabel
+        controlId={controlId}
+        label={label}
+        className={className}
+      >
         <Form.Control
-          name={name}
-          id={name}
+          name={controlId}
           value={field.value}
           onChange={field.onChange}
           onBlur={field.onBlur}

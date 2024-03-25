@@ -10,7 +10,10 @@
     "postinstall": "cd frontend && npm ci",
     "watch": "parcel frontend/src/index.html --open",
     "parcel_build": "parcel build frontend/src/index.html --dist-dir=./frontend/parcel_build",
-    "parcel_start": "start-server -s ./frontend/parcel_build"
+    "parcel_start": "start-server -s ./frontend/parcel_build",
+    "make install": "npm install",
+    "make build": "npm run build --prefix frontend",
+    "make start": "start-server -s ./frontend/build"
   },
   "repository": {
     "type": "git",

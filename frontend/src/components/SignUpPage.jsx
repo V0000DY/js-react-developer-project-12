@@ -38,7 +38,7 @@ const SignupPage = () => {
       .max(20, t('signupPage.yupSchema.username.charCount'))
       .required(t('signupPage.yupSchema.username.required')),
     password: Yup.string()
-      .min(4, t('signupPage.yupSchema.password.min'))
+      .min(6, t('signupPage.yupSchema.password.min'))
       .required(t('signupPage.yupSchema.password.required')),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password'), null], t('signupPage.yupSchema.confirmPassword.oneOf'))
@@ -92,9 +92,9 @@ const SignupPage = () => {
                       className="w-50"
                     >
                       <h1 className="text-center mb-4">{t('signupPage.main.title')}</h1>
-                      <FormikInput name="username" label={t('signupPage.main.inputs.username')} className="mb-3" autoComplete="username" placeholder="username" ref={inputRef} />
-                      <FormikInput name="password" label={t('signupPage.main.inputs.password')} className="mb-3" autoComplete="current-password" type="password" />
-                      <FormikInput name="confirmPassword" label={t('signupPage.main.inputs.confirmPassword')} className="mb-4" autoComplete="current-password" type="password" />
+                      <FormikInput controlId="username" label={t('signupPage.main.inputs.username')} className="mb-3" autoComplete="username" placeholder="username" ref={inputRef} />
+                      <FormikInput controlId="password" label={t('signupPage.main.inputs.password')} className="mb-3" autoComplete="current-password" type="password" placeholder="Type your password" />
+                      <FormikInput controlId="confirmPassword" label={t('signupPage.main.inputs.confirmPassword')} className="mb-4" autoComplete="current-password" type="password" placeholder="Repeat your password" />
                       <Button
                         type="submit"
                         variant="outline-primary"

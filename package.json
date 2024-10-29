@@ -1,0 +1,24 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "Chat Slack",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build --prefix frontend",
+    "start": "npx start-server -s ./frontend/dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "cd frontend && npm ci"
+  },
+  "keywords": [
+    "chat",
+    "websocket",
+    "http",
+    "react",
+    "bootstrap"
+  ],
+  "author": "Vitalii Rubtsov",
+  "license": "ISC",
+  "dependencies": {
+    "@hexlet/chat-server": "^2.0.4"
+  }
+}

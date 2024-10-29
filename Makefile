@@ -21,6 +21,7 @@ develop:
 	make start-backend & make start-frontend
 
 build:
+  make fullinstall
 	rm -rf frontend/dist
 	npm run build
 

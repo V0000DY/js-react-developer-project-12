@@ -1,5 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/V0000DY/js-react-developer-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/V0000DY/js-react-developer-project-12/actions)
+[![Actions Status](https://github.com/V0000DY/js-react-developer-project-12/actions/workflows/eslint-check.yml/badge.svg)](https://github.com/V0000DY/js-react-developer-project-12/actions)
 
 # Simple Chat Application
 
@@ -23,7 +24,14 @@ Welcome to the Simple Chat Application! This project is a lightweight, user-frie
 - **Backend**: Node.js, Express
 - **WebSocket**: For real-time communication
 
-## Getting Started
+## Live service
+To try the result, click the link: [**Simple-chat**](https://simple-chat-4k5t.onrender.com).
+
+## Requirements
+Node version: 22.0.0
+
+## Development
+### Getting Started
 
 To get started with the Simple Chat Application, follow these steps:
 

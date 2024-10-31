@@ -9,3 +9,6 @@ start:
 
 build:
 	npm build
+
+develop:
+	npm run dev

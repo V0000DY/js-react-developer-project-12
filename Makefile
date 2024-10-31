@@ -9,13 +9,13 @@ fullinstall:
 	make -C frontend install
 
 start-frontend:
-	make -C frontend start
+	make -C frontend develop
 
 start-backend:
-	npx start-server -s ./frontend/dist
+	npx start-server
 
 start:
-	make start-backend
+	npx start-server -s ./frontend/dist
 
 develop:
 	make start-backend & make start-frontend

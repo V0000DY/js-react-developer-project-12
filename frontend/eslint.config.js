@@ -73,6 +73,7 @@ export default [
       'import/no-named-as-default-member': 'off',
       'import/no-extraneous-dependencies': 'off',
       'react/prop-types': 'off',
+      'react/react-in-jsx-scope': 'off',
       'no-console': 'off',
       'functional/no-conditional-statements': 'off',
       'functional/no-expression-statements': 'off',

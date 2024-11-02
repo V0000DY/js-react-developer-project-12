@@ -1,11 +1,46 @@
-import React from 'react';
-import { Field } from 'formik';
+/* eslint-disable react/display-name */
+import React, { forwardRef } from 'react';
+import { useField } from 'formik';
+import { FloatingLabel, Form } from 'react-bootstrap';
 
-const TextInput = ({ name, label, type, placeholder }) => (
-  <>
-    <label htmlFor={name}>{label}</label>
-    <Field name={name} type={type} placeholder={placeholder} />
-  </>
-);
+const TextInput = forwardRef((props, ref) => {
+  const {
+    label,
+    className,
+    controlId,
+    type,
+    autoComplete,
+    placeholder,
+  } = props;
+  const [field, meta] = useField(controlId);
+
+  console.log(`Field ${controlId} meta = ${JSON.stringify(meta, null, 2)}`);
+
+  return (
+    <Form.Group>
+      <FloatingLabel
+        controlId={controlId}
+        label={label}
+        className={className}
+      >
+        <Form.Control
+          name={controlId}
+          value={field.value}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
+          isInvalid={meta.error && meta.touched}
+          type={type}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          required
+          ref={ref}
+        />
+        <Form.Control.Feedback type="invalid" tooltip>
+          {meta.error}
+        </Form.Control.Feedback>
+      </FloatingLabel>
+    </Form.Group>
+  );
+});
 
 export default TextInput;

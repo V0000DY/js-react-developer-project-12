@@ -5,12 +5,12 @@ env:
 extends:
   - airbnb
   - plugin:react/recommended
-  - plugin:functional/recommended
+  # - plugin:functional/recommended
   - plugin:react-hooks/recommended
   - plugin:lodash/recommended
   - plugin:sonarjs/recommended-legacy
 
-parser: "@babel/eslint-parser"
+# parser: "@babel/eslint-parser"
 
 parserOptions:
   ecmaFeatures:
@@ -21,7 +21,7 @@ parserOptions:
 
 plugins:
   - react
-  - functional
+  # - functional
   - lodash
   - sonarjs
 

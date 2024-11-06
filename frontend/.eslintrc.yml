@@ -7,7 +7,7 @@ extends:
   - plugin:react/recommended
   # - plugin:functional/recommended
   - plugin:react-hooks/recommended
-  - plugin:lodash/recommended
+  # - plugin:lodash/recommended
   - plugin:sonarjs/recommended-legacy
 
 # parser: "@babel/eslint-parser"
@@ -22,7 +22,7 @@ parserOptions:
 plugins:
   - react
   # - functional
-  - lodash
+  # - lodash
   - sonarjs
 
 rules:

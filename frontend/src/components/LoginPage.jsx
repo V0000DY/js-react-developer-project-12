@@ -13,9 +13,11 @@ import {
   Image,
   Row,
 } from 'react-bootstrap';
+import NavBar from './utils/NavBar.jsx';
 import TextInput from './utils/TextInput.jsx';
 import routes from '../routes.js';
 import useAuth from '../hooks/index.jsx';
+import imgUrl from '../images/RockClimber.jpeg';
 
 const initialValues = {
   username: '',
@@ -58,13 +60,14 @@ const LoginPage = () => {
 
   return (
     <div className="d-flex flex-column vh-100">
+      <NavBar />
       <Container fluid className="h-100">
         <Row className="row justify-content-center align-content-center h-100">
           <Col xs="12" md="8" xxl="6">
             <Card className="shadow-sm">
               <CardBody className="row p-5">
                 <Col xs="12" md="6" className="d-flex align-items-center justify-content-center">
-                  <Image src="./src/images/RockClimber.jpeg" roundedCircle alt="Enter" />
+                  <Image src={imgUrl} roundedCircle alt="Enter" />
                 </Col>
                 <Formik
                   initialValues={initialValues}

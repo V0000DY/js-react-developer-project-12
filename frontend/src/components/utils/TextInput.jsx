@@ -14,8 +14,6 @@ const TextInput = forwardRef((props, ref) => {
   } = props;
   const [field, meta] = useField(controlId);
 
-  console.log(`Field ${controlId} meta = ${JSON.stringify(meta, null, 2)}`);
-
   return (
     <Form.Group>
       <FloatingLabel

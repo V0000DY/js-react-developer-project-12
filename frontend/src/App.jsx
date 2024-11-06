@@ -6,7 +6,7 @@ import {
   useLocation,
   Navigate,
 } from 'react-router-dom';
-import './assets/app.css';
+import './assets/app.scss';
 import './App.css';
 import LoginPage from './components/LoginPage.jsx';
 import ErrorPage from './components/ErrorPage.jsx';

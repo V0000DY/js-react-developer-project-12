@@ -15,15 +15,58 @@ import AuthContext from './context/index.jsx';
 import useAuth from './hooks/index.jsx';
 
 const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const userId = JSON.parse(localStorage.getItem('userId'));
+  const userName = userId ? JSON.stringify(userId.username).replace(/"/g, '') : '';
 
-  const logIn = () => setLoggedIn(true);
+  const [loggedIn, setLoggedIn] = useState(!!userId);
+  const [username, setUsername] = useState(userName);
+
+  const logIn = (name) => {
+    setLoggedIn(true);
+    setUsername(name);
+  };
+
   const logOut = () => {
     localStorage.removeItem('userId');
     setLoggedIn(false);
+    setUsername('');
   };
 
-  const authContextMemoValue = useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn]);
+  const notify = ({ message, type }) => {
+    const props = {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    };
+    console.log(message, type, props);
+    // switch (type) {
+    //   case 'info':
+    //     return toast.info(message, props);
+    //   case 'success':
+    //     return toast.success(message, props);
+    //   case 'warning':
+    //     return toast.warn(message, props);
+    //   case 'error':
+    //     return toast.error(message, props);
+    //   default:
+    //     return toast(message, props);
+    // }
+  };
+
+  const authContextMemoValue = useMemo(() => (
+    {
+      loggedIn,
+      username,
+      logIn,
+      logOut,
+      notify,
+    }
+  ), [username, loggedIn]);
 
   return (
     <AuthContext.Provider value={authContextMemoValue}>

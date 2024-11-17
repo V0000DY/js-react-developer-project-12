@@ -5,6 +5,7 @@ import {
   Navbar,
   Stack,
 } from 'react-bootstrap';
+import { memo } from 'react';
 import useAuth from '../../hooks/index.jsx';
 
 const NavBar = () => {
@@ -29,4 +30,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default memo(NavBar);

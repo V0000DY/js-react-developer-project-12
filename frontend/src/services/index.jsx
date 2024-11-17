@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { chatsApi } from './channelsApi';
-import { messagesApi } from './messagesApi';
+import uiReducer from './uiSlice.js';
+import { apiSlice } from './apiSlice.jsx';
 
 export default configureStore({
   reducer: {
-    [chatsApi.reducerPath]: chatsApi.reducer,
-    [messagesApi.reducerPath]: messagesApi.reducer,
+    ui: uiReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-    .concat(chatsApi.middleware, messagesApi.middleware),
+    .concat(apiSlice.middleware),
 });

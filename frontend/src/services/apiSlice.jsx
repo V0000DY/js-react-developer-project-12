@@ -1,10 +1,27 @@
+/* eslint-disable sonarjs/no-nested-functions */
+/* eslint-disable no-param-reassign */
+import { createSelector } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { io } from 'socket.io-client';
 import getAuthHeader from './getAuthHeader.js';
+// eslint-disable-next-line import/no-cycle
+import { setDefaultChannelId } from './uiSlice.js';
 
 const headerWithToken = getAuthHeader();
 
 const socket = io('http://localhost:5002');
+
+export const selectMessagesByChannel = createSelector(
+  (res) => res.data,
+  (res, channelId) => channelId,
+  (data, channelId) => data?.filter((message) => message.channelId === channelId),
+);
+
+export const selectChannelById = createSelector(
+  (res) => res.data,
+  (res, channelId) => channelId,
+  (data, channelId) => data?.find((channel) => channel.id === channelId),
+);
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -21,6 +38,39 @@ export const apiSlice = createApi({
         'Channel',
         ...result.map(({ id }) => ({ type: 'Channel', id })),
       ],
+      invalidatesTags: ['Message'],
+      async onCacheEntryAdded(arg, lifecycleApi) {
+        try {
+          await lifecycleApi.cacheDataLoaded;
+
+          socket.on('newChannel', (newChannel) => {
+            lifecycleApi.updateCachedData((draft) => {
+              draft.push(newChannel);
+            });
+          });
+
+          socket.on('removeChannel', ({ id }) => {
+            const state = lifecycleApi.getState();
+            const { currentChannelId } = state.ui;
+            if (currentChannelId === id) {
+              lifecycleApi.dispatch(setDefaultChannelId());
+            }
+            lifecycleApi.updateCachedData((draft) => draft.filter((channel) => channel.id !== id));
+          });
+
+          socket.on('renameChannel', (renamedChannel) => {
+            const { id, name } = renamedChannel;
+            lifecycleApi.updateCachedData((draft) => {
+              const originalChannel = draft.find((channel) => channel.id === id);
+              originalChannel.name = name;
+            });
+          });
+        } catch (err) {
+          console.error('Socket.io error from apiSlice', err);
+        }
+        await lifecycleApi.cacheEntryRemoved;
+        socket.close();
+      },
     }),
     addChannel: builder.mutation({
       query: (channel) => ({
@@ -38,7 +88,7 @@ export const apiSlice = createApi({
         body: channel.editedChannel,
         headers: headerWithToken,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: 'Channel', id: arg.id }],
+      invalidatesTags: (result, error, arg) => [{ type: 'Channel', id: arg }],
     }),
     deleteChannel: builder.mutation({
       query: (channelId) => ({
@@ -54,7 +104,10 @@ export const apiSlice = createApi({
         method: 'GET',
         headers: headerWithToken,
       }),
-      providesTags: ['Message'],
+      providesTags: (result = []) => [
+        'Message',
+        ...result.map(({ id }) => ({ type: 'Message', id })),
+      ],
       async onCacheEntryAdded(arg, lifecycleApi) {
         try {
           await lifecycleApi.cacheDataLoaded;
@@ -62,6 +115,12 @@ export const apiSlice = createApi({
             lifecycleApi.updateCachedData((draft) => {
               draft.push(newMessage);
             });
+          });
+
+          socket.on('removeChannel', ({ id }) => {
+            lifecycleApi.updateCachedData(
+              (draft) => draft.filter((message) => message.channelId !== id),
+            );
           });
         } catch (err) {
           console.error('Socket.io error from apiSlice', err);
@@ -78,6 +137,14 @@ export const apiSlice = createApi({
         body: message,
       }),
     }),
+    deleteMessage: builder.mutation({
+      query: (messageId) => ({
+        url: `/messages/${messageId}`,
+        method: 'DELETE',
+        headers: headerWithToken,
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Message', id: arg }],
+    }),
   }),
 });
 
@@ -88,6 +155,7 @@ const {
   useDeleteChannelMutation,
   useGetMessagesQuery,
   useAddMessageMutation,
+  useDeleteMessageMutation,
 } = apiSlice;
 
 export {
@@ -97,4 +165,5 @@ export {
   useDeleteChannelMutation as deleteChannel,
   useGetMessagesQuery as getMessages,
   useAddMessageMutation as addMessage,
+  useDeleteMessageMutation as deleteMessage,
 };

@@ -31,6 +31,8 @@ const en = {
     modals: {
       add: {
         yupSchema: {
+          min: 'Minimum 3 letters',
+          max: 'Maximum 20 letters',
           required: 'Enter new channel name',
           notOneOf: 'A channel with same name already exists!',
         },
@@ -47,6 +49,8 @@ const en = {
       },
       rename: {
         yupSchema: {
+          min: 'Minimum 3 letters',
+          max: 'Maximum 20 letters',
           notOneOf: 'A channel with same name already exists!',
         },
         main: {
@@ -127,8 +131,14 @@ const en = {
         title: 'Log in',
         submitButton: 'Submit',
         inputs: {
-          username: 'Username',
-          password: 'Password',
+          username: {
+            label: 'Username',
+            placeholder: 'Enter your username',
+          },
+          password: {
+            label: 'Password',
+            placeholder: 'Enter your password',
+          },
         },
         bottom: {
           question: "Don't have an account?",

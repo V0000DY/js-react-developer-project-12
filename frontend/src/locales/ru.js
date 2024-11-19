@@ -32,6 +32,8 @@ const ru = {
     modals: {
       add: {
         yupSchema: {
+          min: 'Минимум 3 буквы',
+          max: 'Максимум 20 букв',
           required: 'Введите новое имя канала',
           notOneOf: 'Канал с таким именем уже существует!',
         },
@@ -48,6 +50,8 @@ const ru = {
       },
       rename: {
         yupSchema: {
+          min: 'Минимум 3 буквы',
+          max: 'Максимум 20 букв',
           notOneOf: 'Канал с таким именем уже существует!',
         },
         main: {
@@ -128,8 +132,14 @@ const ru = {
         title: 'Войти',
         submitButton: 'Войти',
         inputs: {
-          username: 'Ваш ник',
-          password: 'Пароль',
+          username: {
+            label: 'Имя пользователя',
+            placeholder: 'Введите имя пользователя',
+          },
+          password: {
+            label: 'Пароль',
+            placeholder: 'Введите ваш пароль',
+          },
         },
         bottom: {
           question: 'Нет аккаунта?',

@@ -13,6 +13,7 @@ import {
   Image,
   Row,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import NavBar from './utils/NavBar.jsx';
 import TextInput from './utils/TextInput.jsx';
 import routes from '../routes.js';
@@ -24,19 +25,22 @@ const initialValues = {
   password: '',
 };
 
-const validationSchema = Yup.object({
-  username: Yup.string()
-    .min(2, 'Минимум 2 буквы')
-    .max(50, 'Максимум 50 букв'),
-  password: Yup.string()
-    .min(4, 'Минимум 4 буквы')
-    .max(50, 'Максимум 50 букв'),
-});
-
 const LoginPage = () => {
   const auth = useAuth();
   const inputRef = useRef();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .min(2, t('loginPage.yupSchema.username.min'))
+      .max(50, t('loginPage.yupSchema.username.max'))
+      .required(t('loginPage.yupSchema.username.required')),
+    password: Yup.string()
+      .min(4, t('loginPage.yupSchema.password.min'))
+      .max(50, t('loginPage.yupSchema.password.max'))
+      .required(t('loginPage.yupSchema.password.required')),
+  });
 
   const onSubmit = async (values, actions) => {
     try {
@@ -46,7 +50,7 @@ const LoginPage = () => {
       navigate('/', { replace: false });
     } catch (err) {
       if (err.isAxiosError && err.response.status === 401) {
-        actions.setFieldError('password', 'Неверные имя пользователя или пароль');
+        actions.setFieldError('password', t('loginPage.errors.axiosErrors.401'));
         inputRef.current.select();
         return;
       }
@@ -75,18 +79,18 @@ const LoginPage = () => {
                   onSubmit={onSubmit}
                 >
                   <Form className="col-12 col-md-6 mt-3 mt-mb-0">
-                    <h1 className="text-center mb-4">Войти</h1>
-                    <TextInput controlId="username" label="Ваш ник" className="mb-3" autoComplete="username" type="text" placeholder="Введите ваш ник" ref={inputRef} />
-                    <TextInput controlId="password" label="Ваш пароль" className="mb-4" autoComplete="current-password" type="password" placeholder="Введите ваш пароль" />
+                    <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>
+                    <TextInput controlId="username" label={t('loginPage.main.inputs.username.label')} className="mb-3" autoComplete="username" type="text" placeholder={t('loginPage.main.inputs.username.placeholder')} ref={inputRef} />
+                    <TextInput controlId="password" label={t('loginPage.main.inputs.password.label')} className="mb-4" autoComplete="current-password" type="password" placeholder={t('loginPage.main.inputs.password.placeholder')} />
 
-                    <Button type="submit" variant="outline-primary" className="w-100 mb-3">Submit</Button>
+                    <Button type="submit" variant="outline-primary" className="w-100 mb-3">{t('loginPage.main.submitButton')}</Button>
                   </Form>
                 </Formik>
               </CardBody>
               <CardFooter className="p-4">
                 <div className="text-center">
-                  <span>Нет аккаунта?</span>
-                  <Link to="/signup">Регистрация</Link>
+                  <span>{t('loginPage.main.bottom.question')}</span>
+                  <Link to="/signup">{t('loginPage.main.bottom.registration')}</Link>
                 </div>
               </CardFooter>
             </Card>

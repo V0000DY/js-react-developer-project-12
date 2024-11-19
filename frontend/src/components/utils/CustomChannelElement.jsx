@@ -23,10 +23,10 @@ const CustomChannelElement = ({
           <span className="me-1">#</span>
           {channelName}
         </Button>
-        <Dropdown.Toggle split variant={buttonClass} id="dropdown-split-secondary" className="flex-grow-0 rounded-0" />
+        <Dropdown.Toggle split variant={buttonClass} id="dropdown-split-secondary" className="flex-grow-0" />
         <Dropdown.Menu>
-          <Dropdown.Item href="#/action-1" onClick={() => showModal('removing', id)}>{t('channelsTab.dropdownMenu.delete')}</Dropdown.Item>
-          <Dropdown.Item href="#/action-2" onClick={() => showModal('renaming', id)}>{t('channelsTab.dropdownMenu.rename')}</Dropdown.Item>
+          <Dropdown.Item onClick={() => showModal('removing', id)}>{t('channelsTab.dropdownMenu.delete')}</Dropdown.Item>
+          <Dropdown.Item onClick={() => showModal('renaming', id)}>{t('channelsTab.dropdownMenu.rename')}</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </li>

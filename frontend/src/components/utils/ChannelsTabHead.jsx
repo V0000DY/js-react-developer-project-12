@@ -1,12 +1,13 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const ChannelsTabHead = () => {
+const ChannelsTabHead = ({ showModal }) => {
   const { t } = useTranslation();
+
   return (
     <div className="d-flex mt-1 mb-2 ps-4 pe-2 p-4 justify-content-between">
       <b>{t('channelsTab.channelsList.title')}</b>
-      <button type="button" className="p-0 text-primary btn btn-group-vertical">
+      <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={() => showModal('adding')}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"

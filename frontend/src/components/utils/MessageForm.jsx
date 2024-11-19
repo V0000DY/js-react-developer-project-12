@@ -1,16 +1,14 @@
 import { useState, memo } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Form, InputGroup } from 'react-bootstrap';
 import useAuth from '../../hooks/index.jsx';
 import { addMessage } from '../../services/apiSlice.jsx';
 import MessageInputBtn from './MessageInputBtn.jsx';
 
-const MessageForm = () => {
+const MessageForm = ({ currentChannel }) => {
   const { t } = useTranslation();
   const auth = useAuth();
   const [createMessage] = addMessage();
-  const currentChannelId = useSelector((state) => state.ui.currentChannelId);
   const [inputText, setInputText] = useState('');
 
   const handleSubmitMessage = (e) => {
@@ -18,7 +16,7 @@ const MessageForm = () => {
     const message = {
       body: inputText,
       username: auth.username,
-      channelId: currentChannelId,
+      channelId: currentChannel.id,
     };
     createMessage(message);
     setInputText('');

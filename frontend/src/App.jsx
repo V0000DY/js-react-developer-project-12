@@ -7,6 +7,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import filter from 'leo-profanity';
 import LoginPage from './components/LoginPage.jsx';
 import ErrorPage from './components/ErrorPage.jsx';
 import ChatPage from './components/ChatPage.jsx';
@@ -20,6 +21,12 @@ import './App.css';
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
   const userName = userId ? JSON.stringify(userId.username).replace(/"/g, '') : '';
+
+  filter.list();
+  filter.clearList();
+  filter.add(filter.getDictionary('en'));
+  filter.add(filter.getDictionary('ru'));
+  filter.list();
 
   const [loggedIn, setLoggedIn] = useState(!!userId);
   const [username, setUsername] = useState(userName);
@@ -60,6 +67,8 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const filterClean = (phrase) => filter.clean(phrase);
+
   const authContextMemoValue = useMemo(() => (
     {
       loggedIn,
@@ -67,6 +76,7 @@ const AuthProvider = ({ children }) => {
       logIn,
       logOut,
       notify,
+      filterClean,
     }
   ), [username, loggedIn]);
 

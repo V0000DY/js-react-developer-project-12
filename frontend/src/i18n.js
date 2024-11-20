@@ -8,8 +8,8 @@ const i18nInstance = i18n.createInstance();
 i18nInstance
   .use(initReactI18next)
   .init({
+    lng: defaultLanguage,
     resources,
-    fallbackLng: defaultLanguage,
   });
 
 export default i18nInstance;

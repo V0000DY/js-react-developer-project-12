@@ -13,6 +13,7 @@ import ErrorPage from './components/ErrorPage.jsx';
 import ChatPage from './components/ChatPage.jsx';
 import AuthContext from './context/index.jsx';
 import useAuth from './hooks/index.jsx';
+import SignupPage from './components/SignupPage.jsx';
 
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -90,6 +91,7 @@ const App = () => (
       <Routes>
         <Route path="*" element={<ErrorPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route
           path="/"
           element={(

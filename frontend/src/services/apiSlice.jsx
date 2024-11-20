@@ -9,7 +9,7 @@ import { setDefaultChannelId } from './uiSlice.js';
 
 const headerWithToken = getAuthHeader();
 
-const socket = io('https://simple-chat-4k5t.onrender.com');
+const socket = io('/');
 
 export const selectMessagesByChannel = createSelector(
   (res) => res.data,

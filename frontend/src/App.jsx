@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Provider, ErrorBoundary } from '@rollbar/react';
 import {
   BrowserRouter,
   Routes,
@@ -17,6 +18,11 @@ import SignupPage from './components/SignupPage.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/app.scss';
 import './App.css';
+
+const rollbarConfig = {
+  accessToken: 'dbf3ab8b3a924a76a7b8e16822c9d111',
+  environment: 'production',
+};
 
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -97,24 +103,28 @@ const ChatRoute = ({ children }) => {
 };
 
 const App = () => (
-  <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="*" element={<ErrorPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route
-          path="/"
-          element={(
-            <ChatRoute>
-              <ChatPage />
-            </ChatRoute>
-          )}
-        />
-      </Routes>
-    </BrowserRouter>
-    <ToastContainer limit={4} />
-  </AuthProvider>
+  <Provider config={rollbarConfig}>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<ErrorPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route
+              path="/"
+              element={(
+                <ChatRoute>
+                  <ChatPage />
+                </ChatRoute>
+              )}
+            />
+          </Routes>
+        </BrowserRouter>
+        <ToastContainer limit={4} />
+      </AuthProvider>
+    </ErrorBoundary>
+  </Provider>
 );
 
 export default App;

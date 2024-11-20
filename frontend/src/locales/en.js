@@ -25,7 +25,7 @@ const en = {
         addButton: '+',
       },
       errors: {
-        socketIoError: 'An error occurred ({{error}}) while sending event ({{evt}}). Resend after 5 seconds',
+        socketIoError: 'An error occurred ({{error}}). Reload later',
       },
     },
     modals: {

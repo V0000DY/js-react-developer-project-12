@@ -9,9 +9,10 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import TextInput from '../utils/TextInput';
 import { editChannel, getChannels } from '../../services/apiSlice';
+import useAuth from '../../hooks';
 
 const Rename = (props) => {
-  // const auth = useAuth();
+  const auth = useAuth();
   const [renameChannel] = editChannel();
   const { modalInfo, onHide } = props;
   const { data: channels = [] } = getChannels();
@@ -38,17 +39,17 @@ const Rename = (props) => {
       };
       await renameChannel(renamedChannel);
       onHide();
-      // auth.notify({
-      //   message: t('modals.rename.toasts.success'),
-      //   type: 'success',
-      // });
+      auth.notify({
+        message: t('modals.rename.toasts.success'),
+        type: 'success',
+      });
     } catch (err) {
       if (err) {
-      //   auth.notify({
-      //     message: t('modals.rename.toasts.error') + err,
-      //     type: 'error',
-      //   });
-      //   return;
+        auth.notify({
+          message: t('modals.rename.toasts.error') + err,
+          type: 'error',
+        });
+        return;
       }
       throw err;
     }

@@ -9,7 +9,7 @@ import { setDefaultChannelId } from './uiSlice.js';
 
 const headerWithToken = getAuthHeader();
 
-const socket = io('http://localhost:5002');
+const socket = io('http://localhost:5001');
 
 export const selectMessagesByChannel = createSelector(
   (res) => res.data,

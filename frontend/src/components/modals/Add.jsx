@@ -5,9 +5,10 @@ import * as Yup from 'yup';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { addChannel, getChannels } from '../../services/apiSlice';
 import TextInput from '../utils/TextInput';
+import useAuth from '../../hooks';
 
 const Add = (props) => {
-  // const auth = useAuth();
+  const auth = useAuth();
   const [createChannel] = addChannel();
   const { data: channels = [] } = getChannels();
   const channelsNames = channels?.map(({ name }) => name);
@@ -34,16 +35,16 @@ const Add = (props) => {
       };
       await createChannel(channel);
       onHide();
-      // auth.notify({
-      //   message: t('modals.add.toasts.success'),
-      //   type: 'success',
-      // });
+      auth.notify({
+        message: t('modals.add.toasts.success'),
+        type: 'success',
+      });
     } catch (err) {
       if (err) {
-        // auth.notify({
-        //   message: t('modals.add.toasts.error') + err,
-        //   type: 'error',
-        // });
+        auth.notify({
+          message: t('modals.add.toasts.error') + err,
+          type: 'error',
+        });
         return;
       }
       throw err;

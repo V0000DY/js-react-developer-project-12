@@ -5,6 +5,7 @@ import {
   Row,
 } from 'react-bootstrap';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import NavBar from './utils/NavBar.jsx';
 import ChannelsTab from './utils/ChannelsTab.jsx';
 import ChannelInfo from './utils/ChannelInfo.jsx';
@@ -16,14 +17,19 @@ import {
   selectChannelById,
   selectMessagesByChannel,
 } from '../services/apiSlice.jsx';
+import useAuth from '../hooks/index.jsx';
 
 const ChatPage = () => {
   const currentChannelId = useSelector((state) => state.ui.currentChannelId);
+  const auth = useAuth();
+  const { t } = useTranslation();
 
   const {
     data: channels = [],
     currentChannel,
     isLoading: isChannelsLoading,
+    isError: isChannelsLoadingError,
+    error: channelsError,
   } = getChannels(undefined, {
     selectFromResult: (result) => ({
       ...result,
@@ -34,12 +40,29 @@ const ChatPage = () => {
   const {
     messagesFromChannel,
     isLoading: isMessagesLoading,
+    isError: isMessagesLoadingError,
+    error: messagesError,
   } = getMessages(undefined, {
     selectFromResult: (result) => ({
       ...result,
       messagesFromChannel: selectMessagesByChannel(result, currentChannel?.id),
     }),
   });
+
+  const handleError = (err) => {
+    auth.notify({
+      message: t('channelsTab.errors.socketIoError', { error: err.data.message }),
+      type: 'error',
+    });
+  };
+
+  if (isChannelsLoadingError) {
+    handleError(channelsError);
+  }
+
+  if (isMessagesLoadingError) {
+    handleError(messagesError);
+  }
 
   return (
     <div className="d-flex flex-column vh-100">

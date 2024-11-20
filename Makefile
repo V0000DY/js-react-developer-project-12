@@ -1,10 +1,10 @@
 lint-frontend:
 	make -C frontend lint
 
-install:
+server-install:
 	npm ci
 
-fullinstall:
+install:
 	npm ci
 	make -C frontend install
 
@@ -21,7 +21,7 @@ develop:
 	make start-backend & make start-frontend
 
 build:
-	make fullinstall
+	make install
 	rm -rf frontend/dist
 	npm run build
 

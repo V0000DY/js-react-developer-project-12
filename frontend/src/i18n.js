@@ -4,7 +4,7 @@ import resources from './locales/index.js';
 
 const i18nInstance = i18n.createInstance();
 
-await i18nInstance
+i18nInstance
   .use(initReactI18next)
   .init({
     lng: 'ru',

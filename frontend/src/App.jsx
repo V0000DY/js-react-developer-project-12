@@ -6,14 +6,16 @@ import {
   useLocation,
   Navigate,
 } from 'react-router-dom';
-import './assets/app.scss';
-import './App.css';
+import { ToastContainer, toast } from 'react-toastify';
 import LoginPage from './components/LoginPage.jsx';
 import ErrorPage from './components/ErrorPage.jsx';
 import ChatPage from './components/ChatPage.jsx';
 import AuthContext from './context/index.jsx';
 import useAuth from './hooks/index.jsx';
 import SignupPage from './components/SignupPage.jsx';
+import 'react-toastify/dist/ReactToastify.css';
+import './assets/app.scss';
+import './App.css';
 
 const AuthProvider = ({ children }) => {
   const userId = JSON.parse(localStorage.getItem('userId'));
@@ -44,19 +46,18 @@ const AuthProvider = ({ children }) => {
       progress: undefined,
       theme: 'light',
     };
-    console.log(message, type, props);
-    // switch (type) {
-    //   case 'info':
-    //     return toast.info(message, props);
-    //   case 'success':
-    //     return toast.success(message, props);
-    //   case 'warning':
-    //     return toast.warn(message, props);
-    //   case 'error':
-    //     return toast.error(message, props);
-    //   default:
-    //     return toast(message, props);
-    // }
+    switch (type) {
+      case 'info':
+        return toast.info(message, props);
+      case 'success':
+        return toast.success(message, props);
+      case 'warning':
+        return toast.warn(message, props);
+      case 'error':
+        return toast.error(message, props);
+      default:
+        return toast(message, props);
+    }
   };
 
   const authContextMemoValue = useMemo(() => (
@@ -102,6 +103,7 @@ const App = () => (
         />
       </Routes>
     </BrowserRouter>
+    <ToastContainer limit={4} />
   </AuthProvider>
 );
 

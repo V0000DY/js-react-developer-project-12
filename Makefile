@@ -21,9 +21,14 @@ develop:
 	make start-backend & make start-frontend
 
 build:
+	rm -rf frontend/dist
+	npm run build
+
+build-install:
 	make install
 	rm -rf frontend/dist
 	npm run build
+
 
 git-add-all:
 	git status

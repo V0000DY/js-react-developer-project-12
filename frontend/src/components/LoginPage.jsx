@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -16,9 +15,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import NavBar from './utils/NavBar.jsx';
 import TextInput from './utils/TextInput.jsx';
-import routes from '../routes.js';
 import useAuth from '../hooks/index.jsx';
 import imgUrl from '../images/RockClimber.jpeg';
+import { userLogin } from '../services/apiSlice.jsx';
 
 const initialValues = {
   username: '',
@@ -26,6 +25,7 @@ const initialValues = {
 };
 
 const LoginPage = () => {
+  const [login] = userLogin();
   const auth = useAuth();
   const inputRef = useRef();
   const navigate = useNavigate();
@@ -44,17 +44,24 @@ const LoginPage = () => {
 
   const onSubmit = async (values, actions) => {
     try {
-      const { data } = await axios.post(routes.loginPath(), values);
-      localStorage.setItem('userId', JSON.stringify(data));
-      auth.logIn();
+      const loginData = await login(values).unwrap();
+      localStorage.setItem('userId', JSON.stringify(loginData));
+      auth.logIn(loginData.username);
       navigate('/', { replace: false });
     } catch (err) {
-      if (err.isAxiosError && err.response.status === 401) {
-        actions.setFieldError('password', t('loginPage.errors.axiosErrors.401'));
+      if (err.status === 'FETCH_ERROR') {
+        auth.notify({
+          message: t('loginPage.errors.FETCH_ERROR'),
+          type: 'error',
+        });
         inputRef.current.select();
-        return;
       }
-      console.log(err);
+      if (err.status === 401) {
+        actions.setFieldError('username', ' ');
+        actions.setFieldError('password', t('loginPage.errors.401'));
+        inputRef.current.select();
+      }
+      throw err;
     }
   };
 

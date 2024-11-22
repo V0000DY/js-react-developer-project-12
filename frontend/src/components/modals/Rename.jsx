@@ -37,7 +37,7 @@ const Rename = (props) => {
         id: modalInfo.channelId,
         editedChannel: { name: values.channelName },
       };
-      await renameChannel(renamedChannel);
+      await renameChannel(renamedChannel).unwrap();
       onHide();
       auth.notify({
         message: t('modals.rename.toasts.success'),
@@ -46,10 +46,9 @@ const Rename = (props) => {
     } catch (err) {
       if (err) {
         auth.notify({
-          message: t('modals.rename.toasts.error') + err,
+          message: t('modals.rename.toasts.error') + err.data.message,
           type: 'error',
         });
-        return;
       }
       throw err;
     }

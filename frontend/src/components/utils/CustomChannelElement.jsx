@@ -26,6 +26,7 @@ const CustomChannelElement = ({
           {auth.filterClean(channelName)}
         </Button>
         <Dropdown.Toggle split variant={buttonClass} id="dropdown-split-secondary" className="flex-grow-0" />
+        <span className="visually-hidden">{t('channelsTab.dropdownMenu.toggleMenu')}</span>
         <Dropdown.Menu>
           <Dropdown.Item onClick={() => showModal('removing', id)}>{t('channelsTab.dropdownMenu.delete')}</Dropdown.Item>
           <Dropdown.Item onClick={() => showModal('renaming', id)}>{t('channelsTab.dropdownMenu.rename')}</Dropdown.Item>

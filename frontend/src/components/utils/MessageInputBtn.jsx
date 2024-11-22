@@ -1,11 +1,11 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const MessageInputBtn = () => {
+const MessageInputBtn = ({ disabled }) => {
   const { t } = useTranslation();
 
   return (
-    <button type="submit" className="btn btn-group-vertical">
+    <button type="submit" className="btn btn-group-vertical" disabled={disabled}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"

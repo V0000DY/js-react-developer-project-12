@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Col,
   Container,
   Row,
 } from 'react-bootstrap';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import NavBar from './utils/NavBar.jsx';
 import ChannelsTab from './utils/ChannelsTab.jsx';
@@ -18,10 +18,12 @@ import {
   selectMessagesByChannel,
 } from '../services/apiSlice.jsx';
 import useAuth from '../hooks/index.jsx';
+import { setDefaultChannelId } from '../services/uiSlice.js';
 
 const ChatPage = () => {
   const currentChannelId = useSelector((state) => state.ui.currentChannelId);
   const auth = useAuth();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const {
@@ -49,23 +51,31 @@ const ChatPage = () => {
     }),
   });
 
-  const handleError = (err) => {
+  const handleError = (err, source) => {
+    if (err.data.message === 'Unauthorized') {
+      auth.logOut();
+      return;
+    }
     auth.notify({
-      message: t('channelsTab.errors.socketIoError', { error: err.data.message }),
+      message: t(`${source}Tab.error`, { error: err.data.message }),
       type: 'error',
     });
   };
 
   if (isChannelsLoadingError) {
-    handleError(channelsError);
+    handleError(channelsError, 'channels');
   }
 
   if (isMessagesLoadingError) {
-    handleError(messagesError);
+    handleError(messagesError, 'messages');
   }
 
+  useEffect(() => {
+    dispatch(setDefaultChannelId());
+  }, [dispatch]);
+
   return (
-    <div className="d-flex flex-column vh-100">
+    <div className="d-flex flex-column h-100">
       <NavBar />
       <Container className="shadow rounded h-100 overflow-hidden my-4">
         <Row className="h-100 bg-white flex-md-row">

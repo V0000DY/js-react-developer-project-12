@@ -33,7 +33,7 @@ const Add = (props) => {
       const channel = {
         name: values.channelName,
       };
-      await createChannel(channel);
+      await createChannel(channel).unwrap();
       onHide();
       auth.notify({
         message: t('modals.add.toasts.success'),
@@ -42,10 +42,9 @@ const Add = (props) => {
     } catch (err) {
       if (err) {
         auth.notify({
-          message: t('modals.add.toasts.error') + err,
+          message: t('modals.add.toasts.error') + err.data.message,
           type: 'error',
         });
-        return;
       }
       throw err;
     }

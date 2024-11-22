@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useEffect, useRef } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -15,10 +14,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
-import routes from '../routes.js';
 import TextInput from './utils/TextInput.jsx';
 import imgUrl from '../images/Celebrator.jpg';
 import NavBar from './utils/NavBar.jsx';
+import { userSignup } from '../services/apiSlice.jsx';
 
 const initialValues = {
   username: '',
@@ -27,6 +26,7 @@ const initialValues = {
 };
 
 const SignupPage = () => {
+  const [signup] = userSignup();
   const auth = useAuth();
   const inputRef = useRef();
   const navigate = useNavigate();
@@ -45,24 +45,24 @@ const SignupPage = () => {
       .required(t('signupPage.yupSchema.confirmPassword.required')),
   });
 
-  const onSubmit = async (values, formikBag) => {
+  const onSubmit = async (values, actions) => {
     try {
-      const res = await axios.post(routes.signupPath(), values);
-      localStorage.setItem('userId', JSON.stringify(res.data));
+      const signupData = await signup(values).unwrap();
+      localStorage.setItem('userId', JSON.stringify(signupData));
       auth.logIn(values.username);
       navigate('/', { replace: false });
     } catch (err) {
-      if (err.isAxiosError && err.code === 'ERR_NETWORK') {
+      if (err.status === 'FETCH_ERROR') {
         auth.notify({
-          message: t('signupPage.errors.axiosErrors.ERR_NETWORK'),
+          message: t('signupPage.errors.FETCH_ERROR'),
           type: 'error',
         });
-        return;
       }
-      if (err.isAxiosError && err.response.status === 409) {
-        formikBag.setFieldError('username', t('signupPage.errors.axiosErrors.409'));
+      if (err.status === 409) {
+        actions.setFieldError('username', ' ');
+        actions.setFieldError('password', ' ');
+        actions.setFieldError('confirmPassword', t('signupPage.errors.409'));
         inputRef.current.select();
-        return;
       }
       throw err;
     }

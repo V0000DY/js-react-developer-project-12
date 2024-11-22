@@ -2,6 +2,9 @@
 const en = {
   translation: {
     messagesTab: {
+      messageForm: {
+        error: 'An error occurred while sending your message: ',
+      },
       counter: {
         count_one: '{{count}} message',
         count_other: '{{count}} messages',
@@ -11,9 +14,7 @@ const en = {
         aria_label: 'New message',
         sendButton: 'Send',
       },
-      errors: {
-        socketIoError: 'An error occurred ({{error}}) while sending event ({{evt}}). Resend after 5 seconds',
-      },
+      error: 'An error occurred while retrieving the list of messages: {{error}}. Please update your request later.',
     },
     channelsTab: {
       dropdownMenu: {
@@ -24,9 +25,7 @@ const en = {
         title: 'Channels',
         addButton: '+',
       },
-      errors: {
-        socketIoError: 'An error occurred ({{error}}). Reload later',
-      },
+      error: 'An error occurred while retrieving the channel list: {{error}}. Please update your request later.',
     },
     modals: {
       add: {
@@ -108,10 +107,8 @@ const en = {
         },
       },
       errors: {
-        axiosErrors: {
-          409: 'A user with the same name already exists',
-          ERR_NETWORK: 'Network error',
-        },
+        409: 'A user with the same name already exists',
+        FETCH_ERROR: 'Failed to sign up. Connection error. Try again later.',
       },
     },
     loginPage: {
@@ -146,16 +143,14 @@ const en = {
         },
       },
       errors: {
-        axiosErrors: {
-          401: 'Authorization error: Invalid password + user pair',
-          ERR_NETWORK: 'Network error',
-        },
+        401: 'Authorization error: Invalid password + user pair',
+        FETCH_ERROR: 'Failed to log in. Connection error. Try again later.',
       },
     },
     errorPage: {
-      main: {
-        title: 'Error 404. The requested page was not found!',
-      },
+      main: 'Page not found',
+      p: 'But you can go ',
+      link: 'to main page',
     },
   },
 };

@@ -61,14 +61,14 @@ const ChannelsTab = ({
   };
 
   return (
-    <Col xs={4} md="2" className="border-end px-0 bg-light flex-column d-flex">
+    <Col xs={4} md="2" className="border-end px-0 bg-light flex-column d-flex h-100">
       <ChannelsTabHead showModal={showModal} />
       {isChannelsLoading && (
         <div>
           <Spinner />
         </div>
       )}
-      <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
+      <ul id="channels-box" className="nav flex-column nav-pills nav-fill  mb-3 overflow-auto h-100 d-block">
         {channels
           .map(({ id, name, removable }) => renderChannel(
             id,

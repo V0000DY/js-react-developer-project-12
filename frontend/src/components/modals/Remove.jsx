@@ -5,25 +5,32 @@ import {
 } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { deleteChannel } from '../../services/apiSlice';
+import {
+  deleteChannel,
+  deleteMessage,
+  getMessages,
+  selectMessagesByChannel,
+} from '../../services/apiSlice';
 import useAuth from '../../hooks';
 
-const Remove = (props) => {
-  const auth = useAuth();
+const Remove = ({ modalInfo, onHide }) => {
+  const { channelId } = modalInfo;
+  const { messagesFromChannel } = getMessages(undefined, {
+    selectFromResult: (result) => ({
+      messagesFromChannel: selectMessagesByChannel(result, channelId),
+    }),
+  });
   const [removeChannel] = deleteChannel();
+  const [removeMessage] = deleteMessage();
   const { t } = useTranslation();
-
-  const {
-    modalInfo,
-    onHide,
-  } = props;
+  const auth = useAuth();
 
   const initialValues = {};
 
   const onSubmit = async () => {
-    const { channelId } = modalInfo;
     try {
-      await removeChannel(channelId);
+      await removeChannel(channelId).unwrap();
+      messagesFromChannel.forEach(({ id }) => removeMessage(id).unwrap());
       onHide();
       auth.notify({
         message: t('modals.remove.toasts.success'),
@@ -32,10 +39,9 @@ const Remove = (props) => {
     } catch (err) {
       if (err) {
         auth.notify({
-          message: t('modals.remove.toasts.error') + err,
+          message: t('modals.remove.toasts.error') + err.data.message,
           type: 'error',
         });
-        return;
       }
       throw err;
     }

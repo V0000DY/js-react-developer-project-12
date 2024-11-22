@@ -3,11 +3,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { io } from 'socket.io-client';
-import getAuthHeader from './getAuthHeader.js';
 // eslint-disable-next-line import/no-cycle
 import { setDefaultChannelId } from './uiSlice.js';
-
-const headerWithToken = getAuthHeader();
 
 const socket = io('/');
 
@@ -25,14 +22,36 @@ export const selectChannelById = createSelector(
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/v1' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/api/v1',
+    prepareHeaders: (headers) => {
+      const userId = JSON.parse(localStorage.getItem('userId'));
+      if (userId) {
+        headers.set('Authorization', `Bearer ${userId.token}`);
+      }
+      return headers;
+    },
+  }),
   tagTypes: ['Channel', 'Message'],
   endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: '/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+    signup: builder.mutation({
+      query: (credentials) => ({
+        url: '/signup',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
     getChannels: builder.query({
       query: () => ({
         url: '/channels',
         method: 'GET',
-        headers: headerWithToken,
       }),
       providesTags: (result = []) => [
         'Channel',
@@ -77,7 +96,6 @@ export const apiSlice = createApi({
         url: '/channels',
         method: 'POST',
         body: channel,
-        headers: headerWithToken,
       }),
       invalidatesTags: ['Channel'],
     }),
@@ -86,7 +104,6 @@ export const apiSlice = createApi({
         url: `/channels/${channel.id}`,
         method: 'PATCH',
         body: channel.editedChannel,
-        headers: headerWithToken,
       }),
       invalidatesTags: (result, error, arg) => [{ type: 'Channel', id: arg }],
     }),
@@ -94,7 +111,6 @@ export const apiSlice = createApi({
       query: (channelId) => ({
         url: `/channels/${channelId}`,
         method: 'DELETE',
-        headers: headerWithToken,
       }),
       invalidatesTags: ['Channel'],
     }),
@@ -102,7 +118,6 @@ export const apiSlice = createApi({
       query: () => ({
         url: '/messages',
         method: 'GET',
-        headers: headerWithToken,
       }),
       providesTags: (result = []) => [
         'Message',
@@ -133,7 +148,6 @@ export const apiSlice = createApi({
       query: (message) => ({
         url: '/messages',
         method: 'POST',
-        headers: headerWithToken,
         body: message,
       }),
     }),
@@ -141,7 +155,6 @@ export const apiSlice = createApi({
       query: (messageId) => ({
         url: `/messages/${messageId}`,
         method: 'DELETE',
-        headers: headerWithToken,
       }),
       invalidatesTags: (result, error, arg) => [{ type: 'Message', id: arg }],
     }),
@@ -149,6 +162,8 @@ export const apiSlice = createApi({
 });
 
 const {
+  useLoginMutation,
+  useSignupMutation,
   useGetChannelsQuery,
   useAddChannelMutation,
   useEditChannelMutation,
@@ -159,6 +174,8 @@ const {
 } = apiSlice;
 
 export {
+  useLoginMutation as userLogin,
+  useSignupMutation as userSignup,
   useGetChannelsQuery as getChannels,
   useAddChannelMutation as addChannel,
   useEditChannelMutation as editChannel,

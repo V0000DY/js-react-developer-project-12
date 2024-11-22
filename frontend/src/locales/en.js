@@ -30,8 +30,7 @@ const en = {
     modals: {
       add: {
         yupSchema: {
-          min: 'Minimum 3 letters',
-          max: 'Maximum 20 letters',
+          charCount: 'From 3 to 20 characters',
           required: 'Enter new channel name',
           notOneOf: 'A channel with same name already exists!',
         },
@@ -48,8 +47,7 @@ const en = {
       },
       rename: {
         yupSchema: {
-          min: 'Minimum 3 letters',
-          max: 'Maximum 20 letters',
+          charCount: 'From 3 to 20 characters',
           notOneOf: 'A channel with same name already exists!',
         },
         main: {

@@ -26,8 +26,8 @@ const Rename = (props) => {
 
   const validationSchema = Yup.object().shape({
     channelName: Yup.string()
-      .min(3, t('modals.rename.yupSchema.min'))
-      .max(20, t('modals.rename.yupSchema.max'))
+      .min(3, t('modals.rename.yupSchema.charCount'))
+      .max(20, t('modals.rename.yupSchema.charCount'))
       .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
   });
 

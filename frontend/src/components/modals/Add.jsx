@@ -22,8 +22,8 @@ const Add = (props) => {
 
   const validationSchema = Yup.object().shape({
     channelName: Yup.string()
-      .min(3, t('modals.add.yupSchema.min'))
-      .max(20, t('modals.add.yupSchema.max'))
+      .min(3, t('modals.add.yupSchema.charCount'))
+      .max(20, t('modals.add.yupSchema.charCount'))
       .required(t('modals.add.yupSchema.required'))
       .notOneOf(channelsNames, t('modals.add.yupSchema.notOneOf')),
   });

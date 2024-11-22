@@ -29,7 +29,6 @@ const ChannelsTab = ({
   const renderChannel = (id, name, removable) => {
     const buttonClass = cn({
       secondary: id === currentChannel?.id,
-      light: id !== currentChannel?.id,
     });
 
     const handleSwitchChannel = () => {
@@ -68,7 +67,7 @@ const ChannelsTab = ({
           <Spinner />
         </div>
       )}
-      <ul id="channels-box" className="nav flex-column nav-pills nav-fill  mb-3 overflow-auto h-100 d-block">
+      <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
         {channels
           .map(({ id, name, removable }) => renderChannel(
             id,

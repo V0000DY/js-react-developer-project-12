@@ -21,7 +21,7 @@ const CustomChannelElement = ({
   return (
     <li className="nav-item w-100">
       <Dropdown as={ButtonGroup} className="d-flex">
-        <Button variant={buttonClass} className="w-100 rounded-0 text-start btn" onClick={() => handleSwitchChannel()}>
+        <Button variant={buttonClass} className="w-100 rounded-0 text-start text-truncate" onClick={() => handleSwitchChannel()}>
           <span className="me-1">#</span>
           {auth.filterClean(channelName)}
         </Button>

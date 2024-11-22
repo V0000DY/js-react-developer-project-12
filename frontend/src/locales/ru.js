@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-hardcoded-credentials */
 const ru = {
   translation: {
     messagesTab: {

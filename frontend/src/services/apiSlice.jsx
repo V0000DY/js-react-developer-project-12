@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-nested-functions */
 /* eslint-disable no-param-reassign */
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';

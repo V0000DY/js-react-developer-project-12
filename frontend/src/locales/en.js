@@ -111,13 +111,13 @@ const en = {
     loginPage: {
       yupSchema: {
         username: {
-          min: 'Minimum 2 letters',
-          max: 'Maximum 50 letters',
+          min: 'Authorization error: Invalid password or username',
+          max: 'Authorization error: Invalid password or username',
           required: 'Required field',
         },
         password: {
-          min: 'Minimum 4 letters',
-          max: 'Maximum 50 letters',
+          min: 'Authorization error: Invalid password or username',
+          max: 'Authorization error: Invalid password or username',
           required: 'Required field',
         },
       },
@@ -140,7 +140,7 @@ const en = {
         },
       },
       errors: {
-        401: 'Authorization error: Invalid password + user pair',
+        401: 'Authorization error: Invalid password or username',
         FETCH_ERROR: 'Failed to log in. Connection error. Try again later.',
       },
     },

@@ -20,7 +20,7 @@ const Remove = ({ modalInfo, onHide }) => {
       messagesFromChannel: selectMessagesByChannel(result, channelId),
     }),
   });
-  const [removeChannel] = deleteChannel();
+  const [removeChannel, { isLoading }] = deleteChannel();
   const [removeMessage] = deleteMessage();
   const { t } = useTranslation();
   const auth = useAuth();
@@ -62,7 +62,7 @@ const Remove = ({ modalInfo, onHide }) => {
               <p className="lead">{t('modals.remove.main.caution')}</p>
               <div className="d-flex justify-content-end">
                 <Button variant="secondary" type="submit" className="me-2" onClick={onHide}>{t('modals.remove.main.resetButton')}</Button>
-                <Button variant="danger" type="submit">{t('modals.remove.main.submitButton')}</Button>
+                <Button variant="danger" type="submit" disabled={isLoading}>{t('modals.remove.main.submitButton')}</Button>
               </div>
             </Form>
           )}

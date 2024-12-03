@@ -9,7 +9,7 @@ import useAuth from '../../hooks';
 
 const Add = (props) => {
   const auth = useAuth();
-  const [createChannel] = addChannel();
+  const [createChannel, { isLoading }] = addChannel();
   const { data: channels = [] } = getChannels();
   const channelsNames = channels?.map(({ name }) => name);
   const { onHide } = props;
@@ -22,6 +22,7 @@ const Add = (props) => {
 
   const validationSchema = Yup.object().shape({
     channelName: Yup.string()
+      .trim()
       .min(3, t('modals.add.yupSchema.charCount'))
       .max(20, t('modals.add.yupSchema.charCount'))
       .required(t('modals.add.yupSchema.required'))
@@ -31,7 +32,7 @@ const Add = (props) => {
   const onSubmit = async (values) => {
     try {
       const channel = {
-        name: values.channelName,
+        name: auth.filterClean(values.channelName.trim()),
       };
       await createChannel(channel).unwrap();
       onHide();
@@ -77,7 +78,7 @@ const Add = (props) => {
               />
               <div className="d-flex justify-content-end">
                 <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.add.main.resetButton')}</Button>
-                <Button variant="primary" type="submit">{t('modals.add.main.submitButton')}</Button>
+                <Button variant="primary" type="submit" disabled={isLoading}>{t('modals.add.main.submitButton')}</Button>
               </div>
             </Form>
           )}

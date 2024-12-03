@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import NavBar from './utils/NavBar.jsx';
 import TextInput from './utils/TextInput.jsx';
 import useAuth from '../hooks/index.jsx';
-import imgUrl from '../images/RockClimber.jpeg';
+import imgUrl from '../assets/RockClimber.jpeg';
 import { userLogin } from '../services/apiSlice.jsx';
 
 const initialValues = {
@@ -57,7 +57,6 @@ const LoginPage = () => {
         inputRef.current.select();
       }
       if (err.status === 401) {
-        actions.setFieldError('username', ' ');
         actions.setFieldError('password', t('loginPage.errors.401'));
         inputRef.current.select();
       }
@@ -85,7 +84,7 @@ const LoginPage = () => {
                   validationSchema={validationSchema}
                   onSubmit={onSubmit}
                 >
-                  <Form className="col-12 col-md-6 mt-3 mt-mb-0">
+                  <Form className="col-12 col-md-6 mt-3 mt-mb-0" noValidate>
                     <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>
                     <TextInput controlId="username" label={t('loginPage.main.inputs.username.label')} className="mb-3" autoComplete="username" type="text" placeholder={t('loginPage.main.inputs.username.placeholder')} ref={inputRef} />
                     <TextInput controlId="password" label={t('loginPage.main.inputs.password.label')} className="mb-4" autoComplete="current-password" type="password" placeholder={t('loginPage.main.inputs.password.placeholder')} />

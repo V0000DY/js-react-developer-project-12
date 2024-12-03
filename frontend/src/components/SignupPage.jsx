@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuth from '../hooks/index.jsx';
 import TextInput from './utils/TextInput.jsx';
-import imgUrl from '../images/Celebrator.jpg';
+import imgUrl from '../assets/Celebrator.jpg';
 import NavBar from './utils/NavBar.jsx';
 import { userSignup } from '../services/apiSlice.jsx';
 
@@ -34,6 +34,7 @@ const SignupPage = () => {
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
+      .trim()
       .min(3, t('signupPage.yupSchema.username.charCount'))
       .max(20, t('signupPage.yupSchema.username.charCount'))
       .required(t('signupPage.yupSchema.username.required')),
@@ -47,7 +48,11 @@ const SignupPage = () => {
 
   const onSubmit = async (values, actions) => {
     try {
-      const signupData = await signup(values).unwrap();
+      const signupData = await signup({
+        username: values.username.trim(),
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      }).unwrap();
       localStorage.setItem('userId', JSON.stringify(signupData));
       auth.logIn(values.username);
       navigate('/', { replace: false });
@@ -59,8 +64,6 @@ const SignupPage = () => {
         });
       }
       if (err.status === 409) {
-        actions.setFieldError('username', ' ');
-        actions.setFieldError('password', ' ');
         actions.setFieldError('confirmPassword', t('signupPage.errors.409'));
         inputRef.current.select();
       }
@@ -90,6 +93,7 @@ const SignupPage = () => {
                     <Form
                       onSubmit={handleSubmit}
                       className="w-50"
+                      noValidate
                     >
                       <h1 className="text-center mb-4">{t('signupPage.main.title')}</h1>
                       <TextInput controlId="username" label={t('signupPage.main.inputs.username')} className="mb-3" autoComplete="username" placeholder="username" ref={inputRef} />

@@ -13,10 +13,11 @@ import useAuth from '../../hooks';
 
 const Rename = (props) => {
   const auth = useAuth();
-  const [renameChannel] = editChannel();
+  const [renameChannel, { isLoading }] = editChannel();
   const { modalInfo, onHide } = props;
   const { data: channels = [] } = getChannels();
   const channelsNames = channels?.map(({ name }) => name);
+  const currentChannel = channels.filter(({ id }) => id === modalInfo.channelId);
   const inputRef = useRef();
   const { t } = useTranslation();
 
@@ -26,6 +27,7 @@ const Rename = (props) => {
 
   const validationSchema = Yup.object().shape({
     channelName: Yup.string()
+      .trim()
       .min(3, t('modals.rename.yupSchema.charCount'))
       .max(20, t('modals.rename.yupSchema.charCount'))
       .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
@@ -35,7 +37,7 @@ const Rename = (props) => {
     try {
       const renamedChannel = {
         id: modalInfo.channelId,
-        editedChannel: { name: values.channelName },
+        editedChannel: { name: auth.filterClean(values.channelName.trim()) },
       };
       await renameChannel(renamedChannel).unwrap();
       onHide();
@@ -55,7 +57,7 @@ const Rename = (props) => {
   };
 
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current.select();
   }, []);
 
   return (
@@ -77,11 +79,12 @@ const Rename = (props) => {
                 className="mb-2"
                 autoComplete="channelName"
                 placeholder="channelName"
+                value={currentChannel[0].name}
                 ref={inputRef}
               />
               <div className="d-flex justify-content-end">
                 <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.rename.main.resetButton')}</Button>
-                <Button variant="primary" type="submit">{t('modals.rename.main.submitButton')}</Button>
+                <Button variant="primary" type="submit" disabled={isLoading}>{t('modals.rename.main.submitButton')}</Button>
               </div>
             </Form>
           )}

@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { useField } from 'formik';
 import { FloatingLabel, Form } from 'react-bootstrap';
 
@@ -11,8 +11,16 @@ const TextInput = forwardRef((props, ref) => {
     type,
     autoComplete,
     placeholder,
+    value,
   } = props;
-  const [field, meta] = useField(controlId);
+  const [field, meta, helpers] = useField(controlId);
+
+  useEffect(() => {
+    if (value) {
+      const { setValue } = helpers;
+      setValue(value);
+    }
+  }, [helpers, value]);
 
   return (
     <Form.Group>

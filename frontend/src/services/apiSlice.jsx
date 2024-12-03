@@ -1,11 +1,16 @@
 /* eslint-disable no-param-reassign */
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { io } from 'socket.io-client';
 // eslint-disable-next-line import/no-cycle
 import { setDefaultChannelId } from './uiSlice.js';
-
-const socket = io('/');
+import {
+  socket,
+  newChannelListener,
+  removeChannelListener,
+  renameChannelListener,
+  newMessageListener,
+  deleteChannelListener,
+} from '../init.jsx';
 
 export const selectMessagesByChannel = createSelector(
   (res) => res.data,
@@ -61,28 +66,11 @@ export const apiSlice = createApi({
         try {
           await lifecycleApi.cacheDataLoaded;
 
-          socket.on('newChannel', (newChannel) => {
-            lifecycleApi.updateCachedData((draft) => {
-              draft.push(newChannel);
-            });
-          });
+          newChannelListener(lifecycleApi);
 
-          socket.on('removeChannel', ({ id }) => {
-            const state = lifecycleApi.getState();
-            const { currentChannelId } = state.ui;
-            if (currentChannelId === id) {
-              lifecycleApi.dispatch(setDefaultChannelId());
-            }
-            lifecycleApi.updateCachedData((draft) => draft.filter((channel) => channel.id !== id));
-          });
+          removeChannelListener(lifecycleApi, setDefaultChannelId);
 
-          socket.on('renameChannel', (renamedChannel) => {
-            const { id, name } = renamedChannel;
-            lifecycleApi.updateCachedData((draft) => {
-              const originalChannel = draft.find((channel) => channel.id === id);
-              originalChannel.name = name;
-            });
-          });
+          renameChannelListener(lifecycleApi);
         } catch (err) {
           console.error('Socket.io error from apiSlice', err);
         }
@@ -125,17 +113,10 @@ export const apiSlice = createApi({
       async onCacheEntryAdded(arg, lifecycleApi) {
         try {
           await lifecycleApi.cacheDataLoaded;
-          socket.on('newMessage', (newMessage) => {
-            lifecycleApi.updateCachedData((draft) => {
-              draft.push(newMessage);
-            });
-          });
 
-          socket.on('removeChannel', ({ id }) => {
-            lifecycleApi.updateCachedData(
-              (draft) => draft.filter((message) => message.channelId !== id),
-            );
-          });
+          newMessageListener(lifecycleApi);
+
+          deleteChannelListener(lifecycleApi);
         } catch (err) {
           console.error('Socket.io error from apiSlice', err);
         }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,9 +14,9 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import NavBar from './utils/NavBar.jsx';
-import TextInput from './utils/TextInput.jsx';
 import useAuth from '../hooks/index.jsx';
 import imgUrl from '../assets/RockClimber.jpeg';
+// eslint-disable-next-line import/no-cycle
 import { userLogin } from '../services/apiSlice.jsx';
 
 const initialValues = {
@@ -34,12 +34,10 @@ const LoginPage = () => {
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(2, t('loginPage.yupSchema.username.min'))
-      .max(50, t('loginPage.yupSchema.username.max'))
-      .required(t('loginPage.yupSchema.username.required')),
+      .max(50, t('loginPage.yupSchema.username.max')),
     password: Yup.string()
       .min(4, t('loginPage.yupSchema.password.min'))
-      .max(50, t('loginPage.yupSchema.password.max'))
-      .required(t('loginPage.yupSchema.password.required')),
+      .max(50, t('loginPage.yupSchema.password.max')),
   });
 
   const onSubmit = async (values, actions) => {
@@ -54,12 +52,11 @@ const LoginPage = () => {
           message: t('loginPage.errors.FETCH_ERROR'),
           type: 'error',
         });
-        inputRef.current.select();
       }
       if (err.status === 401) {
         actions.setFieldError('password', t('loginPage.errors.401'));
-        inputRef.current.select();
       }
+      inputRef.current.select();
       throw err;
     }
   };
@@ -84,13 +81,53 @@ const LoginPage = () => {
                   validationSchema={validationSchema}
                   onSubmit={onSubmit}
                 >
-                  <Form className="col-12 col-md-6 mt-3 mt-mb-0" noValidate>
-                    <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>
-                    <TextInput controlId="username" label={t('loginPage.main.inputs.username.label')} className="mb-3" autoComplete="username" type="text" placeholder={t('loginPage.main.inputs.username.placeholder')} ref={inputRef} />
-                    <TextInput controlId="password" label={t('loginPage.main.inputs.password.label')} className="mb-4" autoComplete="current-password" type="password" placeholder={t('loginPage.main.inputs.password.placeholder')} />
-
-                    <Button type="submit" variant="outline-primary" className="w-100 mb-3">{t('loginPage.main.submitButton')}</Button>
-                  </Form>
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    isSubmitting,
+                  }) => {
+                    console.log(`touched = ${JSON.stringify(touched, null, 2)} errors = ${JSON.stringify(errors, null, 2)}`); // оставил ввывод в консоль, чтобы было видно, что ошибка приходит из setFieldError
+                    return (
+                      <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={handleSubmit}>
+                        <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>
+                        <div className="form-floating mb-3">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="username"
+                            autoComplete="username"
+                            placeholder={t('loginPage.main.inputs.username.placeholder')}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.username}
+                            ref={inputRef}
+                          />
+                          <label htmlFor="username">{t('loginPage.main.inputs.username.label')}</label>
+                        </div>
+                        <div className="form-floating mb-4">
+                          <input
+                            type="password"
+                            className="form-control is-invalid"
+                            id="password"
+                            autoComplete="current-password"
+                            placeholder={t('loginPage.main.inputs.password.placeholder')}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.password}
+                          />
+                          <label htmlFor="password">{t('loginPage.main.inputs.password.label')}</label>
+                          <div className="invalid-tooltip">{errors.password}</div>
+                        </div>
+                        <Button type="submit" variant="outline-primary" className="w-100 mb-3" disabled={isSubmitting}>
+                          {t('loginPage.main.submitButton')}
+                        </Button>
+                      </Form>
+                    );
+                  }}
                 </Formik>
               </CardBody>
               <CardFooter className="p-4">
@@ -110,4 +147,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default memo(LoginPage);

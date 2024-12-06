@@ -1,3 +1,4 @@
+import { createContext, useMemo, useState } from 'react';
 import Add from './Add';
 import Remove from './Remove';
 import Rename from './Rename';
@@ -8,14 +9,35 @@ const modals = {
   renaming: Rename,
 };
 
-const renderModal = (
-  modalInfo,
-  hideModal,
-) => {
-  const { type } = modalInfo;
-  if (!type) return null;
-  const Component = modals[type];
-  return <Component onHide={hideModal} modalInfo={modalInfo} />;
-};
+// const renderModal = (
+//   modalInfo,
+//   hideModal,
+// ) => {
+//   const { type } = modalInfo;
+//   if (!type) return null;
+//   const Component = modals[type];
+//   return <Component onHide={hideModal} modalInfo={modalInfo} />;
+// };
 
-export default renderModal;
+export const ModalContext = createContext({});
+
+export const ModalProvider = ({ children }) => {
+  const [modalInfo, setModalInfo] = useState({ type: null, channelId: null });
+  const showModal = (type, channelId = null) => setModalInfo({ type, channelId });
+  const hideModal = () => setModalInfo({ type: null, channelId: null });
+  const { type } = modalInfo;
+
+  const Component = modals[type];
+
+  const modalContextMemoValue = useMemo(() => ({
+    modalInfo,
+    showModal,
+  }), [modalInfo]);
+
+  return (
+    <ModalContext.Provider value={modalContextMemoValue}>
+      {children}
+      { type ? <Component onHide={hideModal} modalInfo={modalInfo} /> : null }
+    </ModalContext.Provider>
+  );
+};

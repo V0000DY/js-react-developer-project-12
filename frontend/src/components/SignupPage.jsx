@@ -36,14 +36,11 @@ const SignupPage = () => {
     username: Yup.string()
       .trim()
       .min(3, t('signupPage.yupSchema.username.charCount'))
-      .max(20, t('signupPage.yupSchema.username.charCount'))
-      .required(t('signupPage.yupSchema.username.required')),
+      .max(20, t('signupPage.yupSchema.username.charCount')),
     password: Yup.string()
-      .min(6, t('signupPage.yupSchema.password.min'))
-      .required(t('signupPage.yupSchema.password.required')),
+      .min(6, t('signupPage.yupSchema.password.min')),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], t('signupPage.yupSchema.confirmPassword.oneOf'))
-      .required(t('signupPage.yupSchema.confirmPassword.required')),
+      .oneOf([Yup.ref('password'), null], t('signupPage.yupSchema.confirmPassword.oneOf')),
   });
 
   const onSubmit = async (values, actions) => {
@@ -93,7 +90,6 @@ const SignupPage = () => {
                     <Form
                       onSubmit={handleSubmit}
                       className="w-50"
-                      noValidate
                     >
                       <h1 className="text-center mb-4">{t('signupPage.main.title')}</h1>
                       <TextInput controlId="username" label={t('signupPage.main.inputs.username')} className="mb-3" autoComplete="username" placeholder="username" ref={inputRef} />

@@ -13,6 +13,7 @@ import AuthContext from './context/index.jsx';
 import App from './App.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/app.scss';
+import { ModalProvider } from './components/modals/index.jsx';
 
 const rollbarConfig = {
   accessToken: import.meta.env.VITE_ROLLBAR,
@@ -140,8 +141,10 @@ const RunApp = () => {
         <Provider config={rollbarConfig}>
           <ErrorBoundary>
             <AuthProvider>
-              <App />
-              <ToastContainer limit={4} />
+              <ModalProvider>
+                <App />
+                <ToastContainer limit={4} />
+              </ModalProvider>
             </AuthProvider>
           </ErrorBoundary>
         </Provider>

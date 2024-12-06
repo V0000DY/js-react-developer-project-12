@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { memo, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import cn from 'classnames';
 
@@ -10,7 +10,7 @@ import RegularChannelElement from './RegularChannelElement';
 import CustomChannelElement from './CustomChannelElement';
 
 import { setCurrentChannelId } from '../../services/uiSlice';
-import renderModal from '../modals/index.jsx';
+import { ModalContext } from '../modals/index.jsx';
 
 const ChannelsTab = ({
   currentChannel,
@@ -18,13 +18,8 @@ const ChannelsTab = ({
   isChannelsLoading,
 }) => {
   const dispatch = useDispatch();
-
-  const [modalInfo, setModalInfo] = useState({ type: null, channelId: null });
-  const showModal = (type, channelId = null) => setModalInfo({
-    type,
-    channelId,
-  });
-  const hideModal = () => setModalInfo({ type: null, channelId: null });
+  const modal = useContext(ModalContext);
+  const { showModal } = modal;
 
   const renderChannel = (id, name, removable) => {
     const buttonClass = cn({
@@ -75,7 +70,6 @@ const ChannelsTab = ({
             removable,
           ))}
       </ul>
-      {renderModal(modalInfo, hideModal)}
     </Col>
   );
 };

@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, memo, useEffect } from 'react';
 import { useField } from 'formik';
 import { FloatingLabel, Form } from 'react-bootstrap';
 
@@ -15,6 +15,7 @@ const TextInput = forwardRef((props, ref) => {
   } = props;
   const [field, meta, helpers] = useField(controlId);
 
+  console.log(`В инпут пришла ошибка = ${meta.error}`);
   useEffect(() => {
     if (value) {
       const { setValue } = helpers;
@@ -49,4 +50,4 @@ const TextInput = forwardRef((props, ref) => {
   );
 });
 
-export default TextInput;
+export default memo(TextInput);

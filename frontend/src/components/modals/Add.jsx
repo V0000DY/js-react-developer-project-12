@@ -1,20 +1,24 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Formik } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, Form, Modal } from 'react-bootstrap';
+import {
+  Modal,
+  Form,
+  FloatingLabel,
+  Button,
+} from 'react-bootstrap';
 import { addChannel, getChannels } from '../../services/apiSlice';
-import TextInput from '../utils/TextInput';
 import useAuth from '../../hooks';
 
 const Add = (props) => {
+  const { onHide } = props;
   const auth = useAuth();
+  const inputRef = useRef();
+  const { t } = useTranslation();
   const [createChannel, { isLoading }] = addChannel();
   const { data: channels = [] } = getChannels();
   const channelsNames = channels?.map(({ name }) => name);
-  const { onHide } = props;
-  const inputRef = useRef();
-  const { t } = useTranslation();
 
   const initialValues = {
     channelName: '',
@@ -29,27 +33,28 @@ const Add = (props) => {
       .notOneOf(channelsNames, t('modals.add.yupSchema.notOneOf')),
   });
 
-  const onSubmit = async (values) => {
-    try {
-      const channel = {
-        name: auth.filterClean(values.channelName.trim()),
-      };
-      await createChannel(channel).unwrap();
-      onHide();
-      auth.notify({
-        message: t('modals.add.toasts.success'),
-        type: 'success',
-      });
-    } catch (err) {
-      if (err) {
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const channel = {
+          name: auth.filterClean(values.channelName.trim()),
+        };
+        await createChannel(channel).unwrap();
+        onHide();
+        auth.notify({
+          message: t('modals.add.toasts.success'),
+          type: 'success',
+        });
+      } catch (err) {
         auth.notify({
           message: t('modals.add.toasts.error') + err.data.message,
           type: 'error',
         });
       }
-      throw err;
-    }
-  };
+    },
+  });
 
   useEffect(() => {
     inputRef.current.focus();
@@ -61,28 +66,33 @@ const Add = (props) => {
         <Modal.Title>{t('modals.add.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={onSubmit}
-          validationSchema={validationSchema}
-        >
-          {({ handleSubmit }) => (
-            <Form onSubmit={handleSubmit}>
-              <TextInput
-                controlId="channelName"
-                label={t('modals.add.main.input')}
-                className="mb-2"
+        <Form onSubmit={formik.handleSubmit}>
+          <Form.Group>
+            <FloatingLabel
+              className="mb-2"
+              controlId="channelName"
+              label={t('modals.add.main.input')}
+            >
+              <Form.Control
+                isInvalid={formik.errors.channelName && formik.touched.channelName}
+                onChange={formik.handleChange}
+                value={formik.values.channelName}
                 autoComplete="channelName"
-                placeholder="channelName"
+                name="channelName"
+                type="text"
                 ref={inputRef}
+                required
               />
-              <div className="d-flex justify-content-end">
-                <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.add.main.resetButton')}</Button>
-                <Button variant="primary" type="submit" disabled={isLoading}>{t('modals.add.main.submitButton')}</Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
+              <Form.Control.Feedback type="invalid" tooltip>
+                {formik.errors.channelName}
+              </Form.Control.Feedback>
+            </FloatingLabel>
+          </Form.Group>
+          <div className="d-flex justify-content-end">
+            <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.add.main.resetButton')}</Button>
+            <Button variant="primary" type="submit" disabled={isLoading}>{t('modals.add.main.submitButton')}</Button>
+          </div>
+        </Form>
       </Modal.Body>
     </Modal>
   );

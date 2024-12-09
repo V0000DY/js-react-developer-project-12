@@ -3,26 +3,26 @@ import * as Yup from 'yup';
 import {
   Modal,
   Form,
+  FloatingLabel,
   Button,
 } from 'react-bootstrap';
-import { Formik } from 'formik';
+import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import TextInput from '../utils/TextInput';
 import { editChannel, getChannels } from '../../services/apiSlice';
 import useAuth from '../../hooks';
 
 const Rename = (props) => {
-  const auth = useAuth();
-  const [renameChannel, { isLoading }] = editChannel();
   const { modalInfo, onHide } = props;
-  const { data: channels = [] } = getChannels();
-  const channelsNames = channels?.map(({ name }) => name);
-  const currentChannel = channels.filter(({ id }) => id === modalInfo.channelId);
+  const auth = useAuth();
   const inputRef = useRef();
   const { t } = useTranslation();
+  const [renameChannel, { isLoading }] = editChannel();
+  const { data: channels = [] } = getChannels();
+  const channelsNames = channels?.map(({ name }) => name);
+  const currentChannel = channels.find(({ id }) => id === modalInfo.channelId);
 
   const initialValues = {
-    channelName: '',
+    channelName: currentChannel.name,
   };
 
   const validationSchema = Yup.object().shape({
@@ -33,28 +33,29 @@ const Rename = (props) => {
       .notOneOf(channelsNames, t('modals.rename.yupSchema.notOneOf')),
   });
 
-  const onSubmit = async (values) => {
-    try {
-      const renamedChannel = {
-        id: modalInfo.channelId,
-        editedChannel: { name: auth.filterClean(values.channelName.trim()) },
-      };
-      await renameChannel(renamedChannel).unwrap();
-      onHide();
-      auth.notify({
-        message: t('modals.rename.toasts.success'),
-        type: 'success',
-      });
-    } catch (err) {
-      if (err) {
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const renamedChannel = {
+          id: modalInfo.channelId,
+          editedChannel: { name: auth.filterClean(values.channelName.trim()) },
+        };
+        await renameChannel(renamedChannel).unwrap();
+        onHide();
+        auth.notify({
+          message: t('modals.rename.toasts.success'),
+          type: 'success',
+        });
+      } catch (err) {
         auth.notify({
           message: t('modals.rename.toasts.error') + err.data.message,
           type: 'error',
         });
       }
-      throw err;
-    }
-  };
+    },
+  });
 
   useEffect(() => {
     inputRef.current.select();
@@ -66,29 +67,33 @@ const Rename = (props) => {
         <Modal.Title>{t('modals.rename.main.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={onSubmit}
-          validationSchema={validationSchema}
-        >
-          {({ handleSubmit }) => (
-            <Form onSubmit={handleSubmit}>
-              <TextInput
-                controlId="channelName"
-                label={t('modals.rename.main.input')}
-                className="mb-2"
+        <Form onSubmit={formik.handleSubmit}>
+          <Form.Group>
+            <FloatingLabel
+              className="mb-2"
+              controlId="channelName"
+              label={t('modals.rename.main.input')}
+            >
+              <Form.Control
+                isInvalid={formik.errors.channelName && formik.touched.channelName}
+                onChange={formik.handleChange}
+                value={formik.values.channelName}
                 autoComplete="channelName"
-                placeholder="channelName"
-                value={currentChannel[0].name}
+                name="channelName"
+                type="text"
                 ref={inputRef}
+                required
               />
-              <div className="d-flex justify-content-end">
-                <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.rename.main.resetButton')}</Button>
-                <Button variant="primary" type="submit" disabled={isLoading}>{t('modals.rename.main.submitButton')}</Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
+              <Form.Control.Feedback type="invalid" tooltip>
+                {formik.errors.channelName}
+              </Form.Control.Feedback>
+            </FloatingLabel>
+          </Form.Group>
+          <div className="d-flex justify-content-end">
+            <Button variant="secondary" type="reset" className="me-2" onClick={onHide}>{t('modals.rename.main.resetButton')}</Button>
+            <Button variant="primary" type="submit" disabled={isLoading}>{t('modals.rename.main.submitButton')}</Button>
+          </div>
+        </Form>
       </Modal.Body>
     </Modal>
   );

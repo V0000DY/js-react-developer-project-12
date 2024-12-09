@@ -3,14 +3,42 @@ import { createSelector } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 // eslint-disable-next-line import/no-cycle
 import { setDefaultChannelId } from './uiSlice.js';
-import {
-  socket,
-  newChannelListener,
-  removeChannelListener,
-  renameChannelListener,
-  newMessageListener,
-  deleteChannelListener,
-} from '../init.jsx';
+import socket from '../main.jsx';
+
+const newChannelListener = (lifecycleApi) => socket.on('newChannel', (newChannel) => {
+  lifecycleApi.updateCachedData((draft) => {
+    draft.push(newChannel);
+  });
+});
+
+const removeChannelListener = (lifecycleApi) => socket.on('removeChannel', ({ id }) => {
+  const state = lifecycleApi.getState();
+  const { currentChannelId } = state.ui;
+  if (currentChannelId === id) {
+    lifecycleApi.dispatch(setDefaultChannelId());
+  }
+  lifecycleApi.updateCachedData((draft) => draft.filter((channel) => channel.id !== id));
+});
+
+const renameChannelListener = (lifecycleApi) => socket.on('renameChannel', (renamedChannel) => {
+  const { id, name } = renamedChannel;
+  lifecycleApi.updateCachedData((draft) => {
+    const originalChannel = draft.find((channel) => channel.id === id);
+    originalChannel.name = name;
+  });
+});
+
+const newMessageListener = (lifecycleApi) => socket.on('newMessage', (newMessage) => {
+  lifecycleApi.updateCachedData((draft) => {
+    draft.push(newMessage);
+  });
+});
+
+const deleteChannelListener = (lifecycleApi) => socket.on('removeChannel', ({ id }) => {
+  lifecycleApi.updateCachedData(
+    (draft) => draft.filter((message) => message.channelId !== id),
+  );
+});
 
 export const selectMessagesByChannel = createSelector(
   (res) => res.data,
@@ -68,7 +96,7 @@ export const apiSlice = createApi({
 
           newChannelListener(lifecycleApi);
 
-          removeChannelListener(lifecycleApi, setDefaultChannelId);
+          removeChannelListener(lifecycleApi);
 
           renameChannelListener(lifecycleApi);
         } catch (err) {

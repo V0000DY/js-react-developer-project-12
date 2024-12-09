@@ -9,16 +9,6 @@ const modals = {
   renaming: Rename,
 };
 
-// const renderModal = (
-//   modalInfo,
-//   hideModal,
-// ) => {
-//   const { type } = modalInfo;
-//   if (!type) return null;
-//   const Component = modals[type];
-//   return <Component onHide={hideModal} modalInfo={modalInfo} />;
-// };
-
 export const ModalContext = createContext({});
 
 export const ModalProvider = ({ children }) => {

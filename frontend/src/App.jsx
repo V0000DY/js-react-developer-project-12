@@ -22,7 +22,7 @@ const ChatRoute = ({ children }) => {
   );
 };
 
-const App = () => (
+const App = ({ socket }) => (
   <BrowserRouter>
     <Routes>
       <Route path="*" element={<ErrorPage />} />
@@ -32,7 +32,7 @@ const App = () => (
         path="/"
         element={(
           <ChatRoute>
-            <ChatPage />
+            <ChatPage socket={socket} />
           </ChatRoute>
         )}
       />

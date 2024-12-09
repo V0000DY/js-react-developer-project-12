@@ -12,6 +12,7 @@ import ChannelInfo from './utils/ChannelInfo.jsx';
 import MessageTab from './utils/MessagesTab.jsx';
 import MessageForm from './utils/MessageForm.jsx';
 import {
+  apiSlice,
   getChannels,
   getMessages,
   selectChannelById,
@@ -20,7 +21,7 @@ import {
 import useAuth from '../hooks/index.jsx';
 import { setDefaultChannelId } from '../services/uiSlice.js';
 
-const ChatPage = () => {
+const ChatPage = ({ socket }) => {
   const currentChannelId = useSelector((state) => state.ui.currentChannelId);
   const auth = useAuth();
   const dispatch = useDispatch();
@@ -73,6 +74,40 @@ const ChatPage = () => {
   useEffect(() => {
     dispatch(setDefaultChannelId());
   }, [dispatch]);
+
+  useEffect(() => {
+    socket.on('newChannel', (newChannel) => {
+      dispatch(apiSlice.util.updateQueryData('getChannels', undefined, (draft) => {
+        if (!draft.find((channel) => channel.id === newChannel.id)) {
+          draft.push(newChannel);
+        }
+      }));
+    });
+
+    socket.on('removeChannel', ({ id }) => {
+      if (currentChannelId === id) {
+        dispatch(setDefaultChannelId());
+      }
+      dispatch(apiSlice.util.invalidateTags([{ type: 'Channel', id }]));
+      dispatch(apiSlice.util.updateQueryData(
+        'getMessages',
+        undefined,
+        (draft) => draft.filter((message) => message.channelId !== id),
+      ));
+    });
+
+    socket.on('renameChannel', ({ id }) => {
+      dispatch(apiSlice.util.invalidateTags([{ type: 'Channel', id }]));
+    });
+
+    socket.on('newMessage', (newMessage) => {
+      dispatch(apiSlice.util.updateQueryData('getMessages', undefined, (draft) => {
+        if (!draft.find((message) => message.id === newMessage.id)) {
+          draft.push(newMessage);
+        }
+      }));
+    });
+  }, [socket, dispatch, currentChannelId]);
 
   return (
     <div className="d-flex flex-column h-100">

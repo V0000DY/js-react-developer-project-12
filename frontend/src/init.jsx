@@ -16,7 +16,7 @@ const rollbarConfig = {
   environment: 'production',
 };
 
-const init = async () => {
+const init = async (socket) => {
   const i18nInstance = i18n.createInstance();
   await i18nInstance
     .use(initReactI18next)
@@ -32,7 +32,7 @@ const init = async () => {
           <ErrorBoundary>
             <AuthProvider>
               <ModalProvider>
-                <App />
+                <App socket={socket} />
                 <ToastContainer limit={4} />
               </ModalProvider>
             </AuthProvider>

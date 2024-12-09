@@ -5,14 +5,11 @@ import './index.css';
 
 import init from './init.jsx';
 
-const socket = io('/');
-
 const run = async () => {
+  const socket = io('/');
   const root = createRoot(document.getElementById('root'));
-  const app = await init();
+  const app = await init(socket);
   root.render(<React.StrictMode>{app}</React.StrictMode>);
 };
 
 run();
-
-export default socket;

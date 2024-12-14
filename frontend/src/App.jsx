@@ -2,40 +2,23 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  useLocation,
-  Navigate,
 } from 'react-router-dom';
-import LoginPage from './components/LoginPage.jsx';
-import ErrorPage from './components/ErrorPage.jsx';
-import ChatPage from './components/ChatPage.jsx';
-import useAuth from './hooks/index.jsx';
-import SignupPage from './components/SignupPage.jsx';
-import 'react-toastify/dist/ReactToastify.css';
-import './assets/app.scss';
+import LoginPage from './components/pages/LoginPage.jsx';
+import ErrorPage from './components/pages/ErrorPage.jsx';
+import ChatPage from './components/pages/ChatPage.jsx';
+import SignupPage from './components/pages/SignupPage.jsx';
+import PrivateRoute from './components/pages/PrivateRoute.jsx';
+import routes from './routes.js';
 
-const ChatRoute = ({ children }) => {
-  const auth = useAuth();
-  const location = useLocation();
-
-  return (
-    auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
-  );
-};
-
-const App = ({ socket }) => (
+const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="*" element={<ErrorPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route
-        path="/"
-        element={(
-          <ChatRoute>
-            <ChatPage socket={socket} />
-          </ChatRoute>
-        )}
-      />
+      <Route path={routes.pages.errorPage()} element={<ErrorPage />} />
+      <Route path={routes.pages.loginPage()} element={<LoginPage />} />
+      <Route path={routes.pages.signupPage()} element={<SignupPage />} />
+      <Route element={<PrivateRoute />}>
+        <Route path={routes.pages.chatPage()} element={<ChatPage />} />
+      </Route>
     </Routes>
   </BrowserRouter>
 );

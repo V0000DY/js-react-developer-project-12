@@ -1,12 +1,12 @@
 import { useRef, memo, useEffect } from 'react';
-import Spinner from './Spinner.jsx';
-import MessageElement from './MessageElement.jsx';
+import Spinner from '../common/Spinner.jsx';
+import Message from './Message.jsx';
 
 const renderMessage = ({
   id,
   username,
   body,
-}) => <MessageElement key={id} username={username} body={body} />;
+}) => <Message key={id} username={username} body={body} />;
 
 const MessageTab = ({ messages, isMessagesLoading }) => {
   const messageBox = useRef(null);

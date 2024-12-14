@@ -8,12 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { Form, InputGroup } from 'react-bootstrap';
 import useAuth from '../../hooks/index.jsx';
 import { addMessage } from '../../services/apiSlice.jsx';
-import MessageInputBtn from './MessageInputBtn.jsx';
+import ChatInputBtn from './ChatInputBtn.jsx';
 
 const MessageForm = ({ currentChannel }) => {
   const [createMessage] = addMessage();
   const [inputText, setInputText] = useState('');
-  const auth = useAuth();
+  const { auth } = useAuth();
   const { t } = useTranslation();
   const inputRef = useRef();
 
@@ -29,7 +29,7 @@ const MessageForm = ({ currentChannel }) => {
       setInputText('');
     } catch (err) {
       if (err) {
-        auth.notify({
+        auth.toastify({
           message: t('messagesTab.messageForm.error') + err.data.message,
           type: 'error',
         });
@@ -60,7 +60,7 @@ const MessageForm = ({ currentChannel }) => {
             onChange={onChange}
             className="border-0 p-0 ps-2"
           />
-          <MessageInputBtn disabled={!inputText} />
+          <ChatInputBtn disabled={!inputText} />
         </InputGroup>
       </Form>
     </div>

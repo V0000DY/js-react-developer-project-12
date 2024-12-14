@@ -19,10 +19,10 @@ import {
   FloatingLabel,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import NavBar from './utils/NavBar.jsx';
-import useAuth from '../hooks/index.jsx';
-import imgUrl from '../assets/RockClimber.jpeg';
-import { userLogin } from '../services/apiSlice.jsx';
+import NavBar from '../common/NavBar.jsx';
+import useAuth from '../../hooks/index.jsx';
+import imgUrl from '../../assets/RockClimber.jpeg';
+import { userLogin } from '../../services/apiSlice.jsx';
 
 const initialValues = {
   username: '',
@@ -34,7 +34,7 @@ const LoginPage = () => {
   const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
   const [login] = userLogin();
-  const auth = useAuth();
+  const { auth } = useAuth();
   const inputRef = useRef();
 
   const formik = useFormik({
@@ -51,7 +51,7 @@ const LoginPage = () => {
           inputRef.current.select();
           setAuthFailed(true);
         } else {
-          auth.notify({
+          auth.toastify({
             message: t('loginPage.errors.FETCH_ERROR'),
             type: 'error',
           });

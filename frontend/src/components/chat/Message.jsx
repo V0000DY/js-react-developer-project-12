@@ -5,7 +5,7 @@ const MessageElement = ({
   username,
   body,
 }) => {
-  const auth = useAuth();
+  const { auth } = useAuth();
   return (
     <div className="text-break mb-2">
       <b>{auth.filterClean(username)}</b>

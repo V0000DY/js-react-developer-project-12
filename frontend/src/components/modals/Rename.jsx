@@ -13,7 +13,7 @@ import useAuth from '../../hooks';
 
 const Rename = (props) => {
   const { modalInfo, onHide } = props;
-  const auth = useAuth();
+  const { auth } = useAuth();
   const inputRef = useRef();
   const { t } = useTranslation();
   const [renameChannel, { isLoading }] = editChannel();
@@ -44,12 +44,12 @@ const Rename = (props) => {
         };
         await renameChannel(renamedChannel).unwrap();
         onHide();
-        auth.notify({
+        auth.toastify({
           message: t('modals.rename.toasts.success'),
           type: 'success',
         });
       } catch (err) {
-        auth.notify({
+        auth.toastify({
           message: t('modals.rename.toasts.error') + err.data.message,
           type: 'error',
         });
@@ -62,7 +62,7 @@ const Rename = (props) => {
   }, []);
 
   return (
-    <Modal show centered>
+    <Modal show onHide={onHide} centered>
       <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>{t('modals.rename.main.title')}</Modal.Title>
       </Modal.Header>

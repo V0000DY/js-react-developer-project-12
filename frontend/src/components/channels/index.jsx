@@ -4,12 +4,12 @@ import cn from 'classnames';
 
 import { Col } from 'react-bootstrap';
 
-import Spinner from './Spinner';
-import ChannelsTabHead from './ChannelsTabHead';
-import RegularChannelElement from './RegularChannelElement';
-import CustomChannelElement from './CustomChannelElement';
+import Spinner from '../common/Spinner.jsx';
+import Head from './Head.jsx';
+import RegularChannelElement from './RegularChannelElement.jsx';
+import CustomChannelElement from './CustomChannelElement.jsx';
 
-import { setCurrentChannelId } from '../../services/uiSlice';
+import { setCurrentChannelId } from '../../services/uiSlice.js';
 import { ModalContext } from '../modals/index.jsx';
 
 const ChannelsTab = ({
@@ -56,7 +56,7 @@ const ChannelsTab = ({
 
   return (
     <Col xs={4} md="2" className="border-end px-0 bg-light flex-column d-flex h-100">
-      <ChannelsTabHead showModal={showModal} />
+      <Head showModal={showModal} />
       {isChannelsLoading && (
         <div>
           <Spinner />

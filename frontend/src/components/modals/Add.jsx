@@ -13,7 +13,7 @@ import useAuth from '../../hooks';
 
 const Add = (props) => {
   const { onHide } = props;
-  const auth = useAuth();
+  const { auth } = useAuth();
   const inputRef = useRef();
   const { t } = useTranslation();
   const [createChannel, { isLoading }] = addChannel();
@@ -43,12 +43,12 @@ const Add = (props) => {
         };
         await createChannel(channel).unwrap();
         onHide();
-        auth.notify({
+        auth.toastify({
           message: t('modals.add.toasts.success'),
           type: 'success',
         });
       } catch (err) {
-        auth.notify({
+        auth.toastify({
           message: t('modals.add.toasts.error') + err.data.message,
           type: 'error',
         });
@@ -61,7 +61,7 @@ const Add = (props) => {
   }, []);
 
   return (
-    <Modal show centered>
+    <Modal show onHide={onHide} centered>
       <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>{t('modals.add.main.title')}</Modal.Title>
       </Modal.Header>

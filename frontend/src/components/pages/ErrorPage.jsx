@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
-import NavBar from './utils/NavBar.jsx';
-import imgUrl from '../assets/Observer.svg';
+import NavBar from '../common/NavBar.jsx';
+import imgUrl from '../../assets/Observer.svg';
 
 const ErrorPage = () => {
   const { t } = useTranslation();

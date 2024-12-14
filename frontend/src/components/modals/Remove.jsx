@@ -23,7 +23,7 @@ const Remove = ({ modalInfo, onHide }) => {
   const [removeChannel, { isLoading }] = deleteChannel();
   const [removeMessage] = deleteMessage();
   const { t } = useTranslation();
-  const auth = useAuth();
+  const { auth } = useAuth();
 
   const initialValues = {};
 
@@ -32,13 +32,13 @@ const Remove = ({ modalInfo, onHide }) => {
       await removeChannel(channelId).unwrap();
       messagesFromChannel.forEach(({ id }) => removeMessage(id).unwrap());
       onHide();
-      auth.notify({
+      auth.toastify({
         message: t('modals.remove.toasts.success'),
         type: 'success',
       });
     } catch (err) {
       if (err) {
-        auth.notify({
+        auth.toastify({
           message: t('modals.remove.toasts.error') + err.data.message,
           type: 'error',
         });
@@ -48,7 +48,7 @@ const Remove = ({ modalInfo, onHide }) => {
   };
 
   return (
-    <Modal show centered>
+    <Modal show onHide={onHide} centered>
       <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>{t('modals.remove.main.title')}</Modal.Title>
       </Modal.Header>

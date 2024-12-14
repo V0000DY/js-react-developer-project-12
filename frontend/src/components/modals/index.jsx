@@ -13,8 +13,12 @@ export const ModalContext = createContext({});
 
 export const ModalProvider = ({ children }) => {
   const [modalInfo, setModalInfo] = useState({ type: null, channelId: null });
-  const showModal = (type, channelId = null) => setModalInfo({ type, channelId });
-  const hideModal = () => setModalInfo({ type: null, channelId: null });
+  const showModal = (type, channelId = null) => {
+    setModalInfo({ type, channelId });
+  };
+  const hideModal = () => {
+    setModalInfo({ type: null, channelId: null });
+  };
   const { type } = modalInfo;
 
   const Component = modals[type];

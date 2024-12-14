@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     setUsername('');
   };
 
-  const notify = ({ message, type }) => {
+  const toastify = ({ message, type }) => {
     const props = {
       position: 'top-right',
       autoClose: 5000,
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       username,
       logIn,
       logOut,
-      notify,
+      toastify,
       filterClean,
     }
   ), [username, loggedIn]);

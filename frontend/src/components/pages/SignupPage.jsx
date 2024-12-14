@@ -3,6 +3,7 @@ import React, {
   memo,
   useEffect,
   useRef,
+  useState,
 } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -19,10 +20,10 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useAuth from '../hooks/index.jsx';
-import imgUrl from '../assets/Celebrator.jpg';
-import NavBar from './utils/NavBar.jsx';
-import { userSignup } from '../services/apiSlice.jsx';
+import useAuth from '../../hooks/index.jsx';
+import imgUrl from '../../assets/Celebrator.jpg';
+import NavBar from '../common/NavBar.jsx';
+import { userSignup } from '../../services/apiSlice.jsx';
 
 const initialValues = {
   username: '',
@@ -59,9 +60,11 @@ const Input = ({
         ref={ref}
         required
       />
-      <Form.Control.Feedback type="invalid" tooltip>
-        {error}
-      </Form.Control.Feedback>
+      { error ? (
+        <Form.Control.Feedback type="invalid" tooltip>
+          {error}
+        </Form.Control.Feedback>
+      ) : null }
     </FloatingLabel>
   </Form.Group>
 );
@@ -69,11 +72,12 @@ const Input = ({
 const FormInput = memo(forwardRef(Input));
 
 const SignupPage = () => {
+  const { t } = useTranslation();
+  const [signupFailed, setSignupFailed] = useState(false);
   const [signup] = userSignup();
-  const auth = useAuth();
+  const { auth } = useAuth();
   const inputRef = useRef();
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -96,17 +100,17 @@ const SignupPage = () => {
           password: values.password,
           confirmPassword: values.confirmPassword,
         }).unwrap();
+        setSignupFailed(false);
         localStorage.setItem('userId', JSON.stringify(signupData));
         auth.logIn(values.username);
         navigate('/', { replace: false });
       } catch (err) {
         if (err.status === 409) {
-          formik.errors.username = ' ';
-          formik.errors.password = ' ';
           formik.errors.confirmPassword = t('signupPage.errors.409');
           inputRef.current.select();
+          setSignupFailed(true);
         } else {
-          auth.notify({
+          auth.toastify({
             message: t('signupPage.errors.FETCH_ERROR'),
             type: 'error',
           });
@@ -137,7 +141,7 @@ const SignupPage = () => {
                     className="mb-3"
                     controlId="username"
                     label={t('signupPage.main.inputs.username')}
-                    isInvalid={formik.errors.username && formik.touched.username}
+                    isInvalid={(formik.errors.username && formik.touched.username) || signupFailed}
                     onChange={formik.handleChange}
                     value={formik.values.username}
                     autoComplete="username"
@@ -152,7 +156,7 @@ const SignupPage = () => {
                     className="mb-4"
                     controlId="password"
                     label={t('signupPage.main.inputs.password')}
-                    isInvalid={formik.errors.password && formik.touched.password}
+                    isInvalid={(formik.errors.password && formik.touched.password) || signupFailed}
                     onChange={formik.handleChange}
                     value={formik.values.password}
                     autoComplete="new-password"

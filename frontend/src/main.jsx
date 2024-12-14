@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { io } from 'socket.io-client';
-import './index.css';
 
 import init from './init.jsx';
 

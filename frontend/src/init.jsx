@@ -10,6 +10,8 @@ import App from './App.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/app.scss';
 import { ModalProvider } from './components/modals/index.jsx';
+import { apiSlice } from './services/apiSlice.jsx';
+import { setDefaultChannelId } from './services/uiSlice.js';
 
 const rollbarConfig = {
   accessToken: import.meta.env.VITE_ROLLBAR,
@@ -18,6 +20,47 @@ const rollbarConfig = {
 
 const init = async (socket) => {
   const i18nInstance = i18n.createInstance();
+
+  const listenerNewChannel = (payload) => {
+    store.dispatch(apiSlice.util.updateQueryData('getChannels', undefined, (draft) => {
+      if (!draft.find((channel) => channel.id === payload.id)) {
+        draft.push(payload);
+      }
+    }));
+  };
+
+  const listenerRemoveChannel = (payload) => {
+    const { id } = payload;
+    const { currentChannelId } = store.getState().ui;
+    if (currentChannelId === id) {
+      store.dispatch(setDefaultChannelId());
+    }
+    store.dispatch(apiSlice.util.invalidateTags([{ type: 'Channel', id }]));
+    store.dispatch(apiSlice.util.updateQueryData(
+      'getMessages',
+      undefined,
+      (draft) => draft.filter((message) => message.channelId !== id),
+    ));
+  };
+
+  const listenerRenameChannel = (payload) => {
+    const { id } = payload;
+    store.dispatch(apiSlice.util.invalidateTags([{ type: 'Channel', id }]));
+  };
+
+  const listenerNewMessage = (payload) => {
+    store.dispatch(apiSlice.util.updateQueryData('getMessages', undefined, (draft) => {
+      if (!draft.find((message) => message.id === payload.id)) {
+        draft.push(payload);
+      }
+    }));
+  };
+
+  socket.on('newChannel', listenerNewChannel);
+  socket.on('removeChannel', listenerRemoveChannel);
+  socket.on('renameChannel', listenerRenameChannel);
+  socket.on('newMessage', listenerNewMessage);
+
   await i18nInstance
     .use(initReactI18next)
     .init({
@@ -32,7 +75,7 @@ const init = async (socket) => {
           <ErrorBoundary>
             <AuthProvider>
               <ModalProvider>
-                <App socket={socket} />
+                <App />
                 <ToastContainer limit={4} />
               </ModalProvider>
             </AuthProvider>

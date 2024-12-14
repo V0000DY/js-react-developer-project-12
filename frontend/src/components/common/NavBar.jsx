@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import useAuth from '../../hooks/index.jsx';
 
 const NavBar = () => {
-  const auth = useAuth();
+  const { auth } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const userId = JSON.parse(localStorage.getItem('userId'));

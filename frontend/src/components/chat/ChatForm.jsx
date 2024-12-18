@@ -6,8 +6,8 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, InputGroup } from 'react-bootstrap';
-import useAuth from '../../hooks/index.jsx';
-import { addMessage } from '../../services/apiSlice.jsx';
+import useAuth from '../../hooks/useAuth.jsx';
+import { addMessage } from '../../store/apiSlice.jsx';
 import ChatInputBtn from './ChatInputBtn.jsx';
 
 const MessageForm = ({ currentChannel }) => {
@@ -30,7 +30,7 @@ const MessageForm = ({ currentChannel }) => {
     } catch (err) {
       if (err) {
         auth.toastify({
-          message: t('messagesTab.messageForm.error') + err.data.message,
+          message: t('messages.messageForm.error') + err.data.message,
           type: 'error',
         });
       }
@@ -50,8 +50,8 @@ const MessageForm = ({ currentChannel }) => {
         <InputGroup hasValidation>
           <Form.Control
             type="text"
-            placeholder={t('messagesTab.input.placeholder')}
-            aria-label={t('messagesTab.input.aria_label')}
+            placeholder={t('messages.input.placeholder')}
+            aria-label={t('messages.input.aria_label')}
             name="body"
             id="inputEl"
             ref={inputRef}

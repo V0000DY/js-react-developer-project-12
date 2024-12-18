@@ -6,6 +6,7 @@ import {
 } from 'react-bootstrap';
 import { memo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import NavBar from '../common/NavBar.jsx';
 import Channels from '../channels/index.jsx';
 import ChatHead from '../chat/ChatHead.jsx';
@@ -16,8 +17,8 @@ import {
   getMessages,
   selectChannelById,
   selectMessagesByChannel,
-} from '../../services/apiSlice.jsx';
-import useAuth from '../../hooks/index.jsx';
+} from '../../store/apiSlice.jsx';
+import useAuth from '../../hooks/useAuth.jsx';
 
 const ChatPage = () => {
   const currentChannelId = useSelector((state) => state.ui.currentChannelId);
@@ -51,10 +52,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     const handleError = (err, source) => {
-      auth.toastify({
-        message: t(`${source}Tab.error`, { error: err.data.message }),
-        type: 'error',
-      });
+      toast.error(t(`${source}.error`, { error: err.error }));
     };
 
     if (isChannelsLoadingError) {

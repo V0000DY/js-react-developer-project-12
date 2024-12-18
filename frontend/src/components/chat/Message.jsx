@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import useAuth from '../../hooks';
+import useAuth from '../../hooks/useAuth';
 
 const MessageElement = ({
   username,

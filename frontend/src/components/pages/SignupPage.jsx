@@ -20,10 +20,11 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useAuth from '../../hooks/index.jsx';
+import { toast } from 'react-toastify';
+import useAuth from '../../hooks/useAuth.jsx';
 import imgUrl from '../../assets/Celebrator.jpg';
 import NavBar from '../common/NavBar.jsx';
-import { userSignup } from '../../services/apiSlice.jsx';
+import { userSignup } from '../../store/apiSlice.jsx';
 
 const initialValues = {
   username: '',
@@ -110,10 +111,7 @@ const SignupPage = () => {
           inputRef.current.select();
           setSignupFailed(true);
         } else {
-          auth.toastify({
-            message: t('signupPage.errors.FETCH_ERROR'),
-            type: 'error',
-          });
+          toast.error(t('signupPage.errors.FETCH_ERROR'));
         }
       }
     },

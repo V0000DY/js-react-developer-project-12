@@ -19,10 +19,11 @@ import {
   FloatingLabel,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import NavBar from '../common/NavBar.jsx';
-import useAuth from '../../hooks/index.jsx';
+import useAuth from '../../hooks/useAuth.jsx';
 import imgUrl from '../../assets/RockClimber.jpeg';
-import { userLogin } from '../../services/apiSlice.jsx';
+import { userLogin } from '../../store/apiSlice.jsx';
 
 const initialValues = {
   username: '',
@@ -40,9 +41,11 @@ const LoginPage = () => {
   const formik = useFormik({
     initialValues,
     onSubmit: async (values) => {
+      console.log(values);
       try {
         const loginData = await login(values).unwrap();
         setAuthFailed(false);
+        console.log(`loginData = ${JSON.stringify(loginData, null, 2)}`);
         localStorage.setItem('userId', JSON.stringify(loginData));
         auth.logIn(loginData.username);
         navigate('/', { replace: false });
@@ -51,10 +54,7 @@ const LoginPage = () => {
           inputRef.current.select();
           setAuthFailed(true);
         } else {
-          auth.toastify({
-            message: t('loginPage.errors.FETCH_ERROR'),
-            type: 'error',
-          });
+          toast.error(t('loginPage.errors.FETCH_ERROR'));
         }
       }
     },

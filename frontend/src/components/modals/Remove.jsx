@@ -5,13 +5,13 @@ import {
 } from 'react-bootstrap';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import {
   deleteChannel,
   deleteMessage,
   getMessages,
   selectMessagesByChannel,
-} from '../../services/apiSlice';
-import useAuth from '../../hooks';
+} from '../../store/apiSlice';
 
 const Remove = ({ modalInfo, onHide }) => {
   const { channelId } = modalInfo;
@@ -23,7 +23,6 @@ const Remove = ({ modalInfo, onHide }) => {
   const [removeChannel, { isLoading }] = deleteChannel();
   const [removeMessage] = deleteMessage();
   const { t } = useTranslation();
-  const { auth } = useAuth();
 
   const initialValues = {};
 
@@ -32,16 +31,10 @@ const Remove = ({ modalInfo, onHide }) => {
       await removeChannel(channelId).unwrap();
       messagesFromChannel.forEach(({ id }) => removeMessage(id).unwrap());
       onHide();
-      auth.toastify({
-        message: t('modals.remove.toasts.success'),
-        type: 'success',
-      });
+      toast.success(t('modals.remove.toasts.success'));
     } catch (err) {
       if (err) {
-        auth.toastify({
-          message: t('modals.remove.toasts.error') + err.data.message,
-          type: 'error',
-        });
+        toast.error(t('modals.remove.toasts.error') + err.data.message);
       }
       throw err;
     }

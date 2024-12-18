@@ -2,7 +2,7 @@ import {
   Navigate,
   Outlet,
 } from 'react-router-dom';
-import useAuth from '../../hooks';
+import useAuth from '../../hooks/useAuth';
 import routes from '../../routes';
 
 const PrivateRoute = () => {
@@ -10,7 +10,7 @@ const PrivateRoute = () => {
 
   return isAuthorized
     ? <Outlet />
-    : <Navigate to={routes.pages.loginPage()} />;
+    : <Navigate to={routes.pages.getLoginPage()} />;
 };
 
 export default PrivateRoute;

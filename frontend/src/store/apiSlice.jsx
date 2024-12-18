@@ -1,5 +1,16 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import routes from '../routes';
+
+// const prepareHeaders = (headers, { getState }) => {
+//   const { auth } = getState();
+//   console.log(`auth = ${JSON.stringify(auth)}`);
+//   if (auth.token) {
+//     headers.set('Authorization', `Bearer ${auth?.token}`);
+//   }
+
+//   return headers;
+// };
 
 export const selectMessagesByChannel = createSelector(
   (res) => res.data,
@@ -16,7 +27,6 @@ export const selectChannelById = createSelector(
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api/v1',
     prepareHeaders: (headers) => {
       const userId = JSON.parse(localStorage.getItem('userId'));
       if (userId) {
@@ -29,21 +39,21 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/login',
+        url: routes.getLoginPath(),
         method: 'POST',
         body: credentials,
       }),
     }),
     signup: builder.mutation({
       query: (credentials) => ({
-        url: '/signup',
+        url: routes.getSignupPath(),
         method: 'POST',
         body: credentials,
       }),
     }),
     getChannels: builder.query({
       query: () => ({
-        url: '/channels',
+        url: routes.getChannelsPath(),
         method: 'GET',
       }),
       providesTags: (result = []) => [
@@ -54,7 +64,7 @@ export const apiSlice = createApi({
     }),
     addChannel: builder.mutation({
       query: (channel) => ({
-        url: '/channels',
+        url: routes.getChannelsPath(),
         method: 'POST',
         body: channel,
       }),
@@ -62,7 +72,7 @@ export const apiSlice = createApi({
     }),
     editChannel: builder.mutation({
       query: (channel) => ({
-        url: `/channels/${channel.id}`,
+        url: routes.getChannelPath(channel.id),
         method: 'PATCH',
         body: channel.editedChannel,
       }),
@@ -70,14 +80,14 @@ export const apiSlice = createApi({
     }),
     deleteChannel: builder.mutation({
       query: (channelId) => ({
-        url: `/channels/${channelId}`,
+        url: routes.getChannelPath(channelId),
         method: 'DELETE',
       }),
       invalidatesTags: ['Channel'],
     }),
     getMessages: builder.query({
       query: () => ({
-        url: '/messages',
+        url: routes.getMessagesPath(),
         method: 'GET',
       }),
       providesTags: (result = []) => [
@@ -87,14 +97,14 @@ export const apiSlice = createApi({
     }),
     addMessage: builder.mutation({
       query: (message) => ({
-        url: '/messages',
+        url: routes.getMessagesPath(),
         method: 'POST',
         body: message,
       }),
     }),
     deleteMessage: builder.mutation({
       query: (messageId) => ({
-        url: `/messages/${messageId}`,
+        url: routes.getMessagePath(messageId),
         method: 'DELETE',
       }),
       invalidatesTags: (result, error, arg) => [{ type: 'Message', id: arg }],

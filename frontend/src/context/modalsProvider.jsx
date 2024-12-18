@@ -1,7 +1,7 @@
 import { createContext, useMemo, useState } from 'react';
-import Add from './Add';
-import Remove from './Remove';
-import Rename from './Rename';
+import Add from '../components/modals/Add';
+import Remove from '../components/modals/Remove';
+import Rename from '../components/modals/Rename';
 
 const modals = {
   adding: Add,

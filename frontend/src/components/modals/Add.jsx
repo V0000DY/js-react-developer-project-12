@@ -8,8 +8,9 @@ import {
   FloatingLabel,
   Button,
 } from 'react-bootstrap';
-import { addChannel, getChannels } from '../../services/apiSlice';
-import useAuth from '../../hooks';
+import { toast } from 'react-toastify';
+import { addChannel, getChannels } from '../../store/apiSlice';
+import useAuth from '../../hooks/useAuth';
 
 const Add = (props) => {
   const { onHide } = props;
@@ -43,15 +44,9 @@ const Add = (props) => {
         };
         await createChannel(channel).unwrap();
         onHide();
-        auth.toastify({
-          message: t('modals.add.toasts.success'),
-          type: 'success',
-        });
+        toast.success(t('modals.rename.toasts.success'));
       } catch (err) {
-        auth.toastify({
-          message: t('modals.add.toasts.error') + err.data.message,
-          type: 'error',
-        });
+        toast.error(t('modals.add.toasts.error') + err.data.message);
       }
     },
   });

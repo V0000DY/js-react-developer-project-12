@@ -13,11 +13,11 @@ import routes from './routes.js';
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path={routes.pages.errorPage()} element={<ErrorPage />} />
-      <Route path={routes.pages.loginPage()} element={<LoginPage />} />
-      <Route path={routes.pages.signupPage()} element={<SignupPage />} />
+      <Route path={routes.pages.getErrorPage()} element={<ErrorPage />} />
+      <Route path={routes.pages.getLoginPage()} element={<LoginPage />} />
+      <Route path={routes.pages.getSignupPage()} element={<SignupPage />} />
       <Route element={<PrivateRoute />}>
-        <Route path={routes.pages.chatPage()} element={<ChatPage />} />
+        <Route path={routes.pages.getChatPage()} element={<ChatPage />} />
       </Route>
     </Routes>
   </BrowserRouter>

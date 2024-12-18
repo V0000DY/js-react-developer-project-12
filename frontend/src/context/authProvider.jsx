@@ -1,5 +1,4 @@
 import { useMemo, useState, createContext } from 'react';
-import { toast } from 'react-toastify';
 import filter from 'leo-profanity';
 
 const AuthContext = createContext({});
@@ -28,31 +27,6 @@ export const AuthProvider = ({ children }) => {
     setUsername('');
   };
 
-  const toastify = ({ message, type }) => {
-    const props = {
-      position: 'top-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light',
-    };
-    switch (type) {
-      case 'info':
-        return toast.info(message, props);
-      case 'success':
-        return toast.success(message, props);
-      case 'warning':
-        return toast.warn(message, props);
-      case 'error':
-        return toast.error(message, props);
-      default:
-        return toast(message, props);
-    }
-  };
-
   const filterClean = (phrase) => filter.clean(phrase);
 
   const authContextMemoValue = useMemo(() => (
@@ -61,7 +35,6 @@ export const AuthProvider = ({ children }) => {
       username,
       logIn,
       logOut,
-      toastify,
       filterClean,
     }
   ), [username, loggedIn]);

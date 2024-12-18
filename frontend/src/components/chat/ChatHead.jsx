@@ -12,7 +12,7 @@ const ChannelInfo = ({ channelName, messagesCount }) => {
           {channelName}
         </b>
       </p>
-      <span className="text-muted">{t('messagesTab.counter.count', { count: messagesCount })}</span>
+      <span className="text-muted">{t('messages.counter.count', { count: messagesCount })}</span>
     </div>
   );
 };

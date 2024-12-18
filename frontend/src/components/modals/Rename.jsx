@@ -8,8 +8,9 @@ import {
 } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { editChannel, getChannels } from '../../services/apiSlice';
-import useAuth from '../../hooks';
+import { toast } from 'react-toastify';
+import { editChannel, getChannels } from '../../store/apiSlice';
+import useAuth from '../../hooks/useAuth';
 
 const Rename = (props) => {
   const { modalInfo, onHide } = props;
@@ -44,15 +45,9 @@ const Rename = (props) => {
         };
         await renameChannel(renamedChannel).unwrap();
         onHide();
-        auth.toastify({
-          message: t('modals.rename.toasts.success'),
-          type: 'success',
-        });
+        toast.success(t('modals.rename.toasts.success'));
       } catch (err) {
-        auth.toastify({
-          message: t('modals.rename.toasts.error') + err.data.message,
-          type: 'error',
-        });
+        toast.error(t('modals.rename.toasts.error') + err.data.message);
       }
     },
   });

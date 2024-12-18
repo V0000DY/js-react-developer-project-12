@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAuth from '../../hooks/index.jsx';
+import useAuth from '../../hooks/useAuth.jsx';
 
 const NavBar = () => {
   const { auth } = useAuth();

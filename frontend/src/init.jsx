@@ -3,15 +3,15 @@ import { Provider, ErrorBoundary } from '@rollbar/react';
 import { ToastContainer } from 'react-toastify';
 import i18n from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
-import store from './services/index.jsx';
+import store from './store/index.jsx';
 import resources from './locales/index.js';
-import { AuthProvider } from './context/index.jsx';
+import { AuthProvider } from './context/authProvider.jsx';
+import { ModalProvider } from './context/modalsProvider.jsx';
 import App from './App.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import './assets/app.scss';
-import { ModalProvider } from './components/modals/index.jsx';
-import { apiSlice } from './services/apiSlice.jsx';
-import { setDefaultChannelId } from './services/uiSlice.js';
+import { apiSlice } from './store/apiSlice.jsx';
+import { setDefaultChannelId } from './store/uiSlice.js';
 
 const rollbarConfig = {
   accessToken: import.meta.env.VITE_ROLLBAR,
@@ -76,7 +76,17 @@ const init = async (socket) => {
             <AuthProvider>
               <ModalProvider>
                 <App />
-                <ToastContainer limit={4} />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  closeOnClick
+                  pauseOnHover
+                  draggable
+                  progress={undefined}
+                  theme="light"
+                  limit={4}
+                />
               </ModalProvider>
             </AuthProvider>
           </ErrorBoundary>

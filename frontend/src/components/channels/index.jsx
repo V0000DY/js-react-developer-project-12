@@ -9,10 +9,10 @@ import Head from './Head.jsx';
 import RegularChannelElement from './RegularChannelElement.jsx';
 import CustomChannelElement from './CustomChannelElement.jsx';
 
-import { setCurrentChannelId } from '../../services/uiSlice.js';
-import { ModalContext } from '../modals/index.jsx';
+import { setCurrentChannelId } from '../../store/uiSlice.js';
+import { ModalContext } from '../../context/modalsProvider.jsx';
 
-const ChannelsTab = ({
+const Channels = ({
   currentChannel,
   channels,
   isChannelsLoading,
@@ -74,4 +74,4 @@ const ChannelsTab = ({
   );
 };
 
-export default memo(ChannelsTab);
+export default memo(Channels);

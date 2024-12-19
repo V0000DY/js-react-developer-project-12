@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { apiSlice } from './apiSlice';
+import { channelsApi } from '../apis/channelsApi.js';
 
 const defaultChannelId = '1';
 
@@ -21,11 +21,11 @@ export const uiSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addMatcher(apiSlice.endpoints.addChannel.matchFulfilled, (state, action) => {
+      .addMatcher(channelsApi.endpoints.addChannel.matchFulfilled, (state, action) => {
         const { id } = action.payload;
         state.currentChannelId = id;
       })
-      .addMatcher(apiSlice.endpoints.deleteChannel.matchFulfilled, (state, action) => {
+      .addMatcher(channelsApi.endpoints.deleteChannel.matchFulfilled, (state, action) => {
         const { id } = action.payload;
         if (state.currentChannelId === id) {
           state.currentChannelId = defaultChannelId;
@@ -38,5 +38,4 @@ export const uiSlice = createSlice({
 });
 
 export const { setCurrentChannelId, setDefaultChannelId } = uiSlice.actions;
-export const { selectCurrentChannelId } = uiSlice.selectors;
 export default uiSlice.reducer;

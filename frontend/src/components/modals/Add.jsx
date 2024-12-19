@@ -9,12 +9,11 @@ import {
   Button,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { addChannel, getChannels } from '../../store/apiSlice';
-import useAuth from '../../hooks/useAuth';
+import filter from 'leo-profanity';
+import { addChannel, getChannels } from '../../store/apis/channelsApi.js';
 
 const Add = (props) => {
   const { onHide } = props;
-  const { auth } = useAuth();
   const inputRef = useRef();
   const { t } = useTranslation();
   const [createChannel, { isLoading }] = addChannel();
@@ -40,7 +39,7 @@ const Add = (props) => {
     onSubmit: async (values) => {
       try {
         const channel = {
-          name: auth.filterClean(values.channelName.trim()),
+          name: filter.clean(values.channelName.trim()),
         };
         await createChannel(channel).unwrap();
         onHide();

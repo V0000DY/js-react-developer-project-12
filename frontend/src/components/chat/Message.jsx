@@ -1,18 +1,14 @@
 import { memo } from 'react';
-import useAuth from '../../hooks/useAuth';
 
 const MessageElement = ({
   username,
   body,
-}) => {
-  const { auth } = useAuth();
-  return (
-    <div className="text-break mb-2">
-      <b>{auth.filterClean(username)}</b>
-      {': '}
-      {auth.filterClean(body)}
-    </div>
-  );
-};
+}) => (
+  <div className="text-break mb-2">
+    <b>{username}</b>
+    {': '}
+    {body}
+  </div>
+);
 
 export default memo(MessageElement);

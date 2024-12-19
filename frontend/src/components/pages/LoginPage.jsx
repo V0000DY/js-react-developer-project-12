@@ -20,10 +20,12 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import NavBar from '../common/NavBar.jsx';
-import useAuth from '../../hooks/useAuth.jsx';
+import { useDispatch } from 'react-redux';
+import NavBar from '../NavBar.jsx';
 import imgUrl from '../../assets/RockClimber.jpeg';
-import { userLogin } from '../../store/apiSlice.jsx';
+import { userLogin } from '../../store/apis/authApi.js';
+import { logIn } from '../../store/slices/authSlice.js';
+import routes from '../../routes.js';
 
 const initialValues = {
   username: '',
@@ -31,29 +33,27 @@ const initialValues = {
 };
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
   const [login] = userLogin();
-  const { auth } = useAuth();
   const inputRef = useRef();
 
   const formik = useFormik({
     initialValues,
     onSubmit: async (values) => {
-      console.log(values);
       try {
         const loginData = await login(values).unwrap();
         setAuthFailed(false);
-        console.log(`loginData = ${JSON.stringify(loginData, null, 2)}`);
-        localStorage.setItem('userId', JSON.stringify(loginData));
-        auth.logIn(loginData.username);
-        navigate('/', { replace: false });
+        dispatch(logIn((loginData)));
+        navigate(routes.pages.getChatPage());
       } catch (err) {
+        setAuthFailed(true);
         if (err.status === 401) {
           inputRef.current.select();
-          setAuthFailed(true);
         } else {
+          console.log(err);
           toast.error(t('loginPage.errors.FETCH_ERROR'));
         }
       }
@@ -135,7 +135,7 @@ const LoginPage = () => {
                     {t('loginPage.main.bottom.question')}
                     {' '}
                   </span>
-                  <Link to="/signup">{t('loginPage.main.bottom.registration')}</Link>
+                  <Link to={routes.pages.getSignupPage()}>{t('loginPage.main.bottom.registration')}</Link>
                 </div>
               </CardFooter>
             </Card>

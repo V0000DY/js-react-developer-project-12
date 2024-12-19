@@ -9,12 +9,11 @@ import {
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { editChannel, getChannels } from '../../store/apiSlice';
-import useAuth from '../../hooks/useAuth';
+import filter from 'leo-profanity';
+import { editChannel, getChannels } from '../../store/apis/channelsApi.js';
 
 const Rename = (props) => {
   const { modalInfo, onHide } = props;
-  const { auth } = useAuth();
   const inputRef = useRef();
   const { t } = useTranslation();
   const [renameChannel, { isLoading }] = editChannel();
@@ -41,7 +40,7 @@ const Rename = (props) => {
       try {
         const renamedChannel = {
           id: modalInfo.channelId,
-          editedChannel: { name: auth.filterClean(values.channelName.trim()) },
+          editedChannel: { name: filter.clean(values.channelName.trim()) },
         };
         await renameChannel(renamedChannel).unwrap();
         onHide();

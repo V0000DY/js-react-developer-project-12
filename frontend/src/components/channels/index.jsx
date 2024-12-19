@@ -4,12 +4,12 @@ import cn from 'classnames';
 
 import { Col } from 'react-bootstrap';
 
-import Spinner from '../common/Spinner.jsx';
+import Spinner from '../Spinner.jsx';
 import Head from './Head.jsx';
 import RegularChannelElement from './RegularChannelElement.jsx';
 import CustomChannelElement from './CustomChannelElement.jsx';
 
-import { setCurrentChannelId } from '../../store/uiSlice.js';
+import { setCurrentChannelId } from '../../store/slices/uiSlice.js';
 import { ModalContext } from '../../context/modalsProvider.jsx';
 
 const Channels = ({

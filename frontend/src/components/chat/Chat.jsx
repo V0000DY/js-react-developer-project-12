@@ -1,5 +1,5 @@
 import { useRef, memo, useEffect } from 'react';
-import Spinner from '../common/Spinner.jsx';
+import Spinner from '../Spinner.jsx';
 import Message from './Message.jsx';
 
 const renderMessage = ({
@@ -8,7 +8,7 @@ const renderMessage = ({
   body,
 }) => <Message key={id} username={username} body={body} />;
 
-const MessageTab = ({ messages, isMessagesLoading }) => {
+const Chat = ({ messages, isMessagesLoading }) => {
   const messageBox = useRef(null);
 
   useEffect(() => {
@@ -24,4 +24,4 @@ const MessageTab = ({ messages, isMessagesLoading }) => {
   );
 };
 
-export default memo(MessageTab);
+export default memo(Chat);

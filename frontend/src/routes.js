@@ -1,12 +1,12 @@
-const baseUrl = '/api/v1';
+const API_V1 = '/api/v1';
 
 const routes = {
-  getLoginPath: () => `${baseUrl}/login`,
-  getSignupPath: () => `${baseUrl}/signup`,
-  getChannelsPath: () => `${baseUrl}/channels`,
-  getChannelPath: (id) => `${baseUrl}/channels/${id}`,
-  getMessagesPath: () => `${baseUrl}/messages`,
-  getMessagePath: (id) => `${baseUrl}/messages/${id}`,
+  getLoginPath: () => `${API_V1}/login`,
+  getSignupPath: () => `${API_V1}/signup`,
+  getChannelsPath: () => `${API_V1}/channels`,
+  getChannelPath: (id) => `${API_V1}/channels/${id}`,
+  getMessagesPath: () => `${API_V1}/messages`,
+  getMessagePath: (id) => `${API_V1}/messages/${id}`,
   pages: {
     getErrorPage: () => '*',
     getLoginPage: () => '/login',

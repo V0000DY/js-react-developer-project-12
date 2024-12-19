@@ -6,22 +6,24 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, InputGroup } from 'react-bootstrap';
-import useAuth from '../../hooks/useAuth.jsx';
-import { addMessage } from '../../store/apiSlice.jsx';
+import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import filter from 'leo-profanity';
+import { addMessage } from '../../store/apis/messagesApi.js';
 import ChatInputBtn from './ChatInputBtn.jsx';
 
 const MessageForm = ({ currentChannel }) => {
   const [createMessage] = addMessage();
   const [inputText, setInputText] = useState('');
-  const { auth } = useAuth();
+  const { username } = useSelector((state) => state.authSlice);
   const { t } = useTranslation();
   const inputRef = useRef();
 
   const handleSubmitMessage = async (e) => {
     e.preventDefault();
     const message = {
-      body: inputText,
-      username: auth.username,
+      body: filter.clean(inputText),
+      username,
       channelId: currentChannel.id,
     };
     try {
@@ -29,10 +31,7 @@ const MessageForm = ({ currentChannel }) => {
       setInputText('');
     } catch (err) {
       if (err) {
-        auth.toastify({
-          message: t('messages.messageForm.error') + err.data.message,
-          type: 'error',
-        });
+        toast.error(t('messages.messageForm.error') + err.data.message);
       }
       throw err;
     }

@@ -21,10 +21,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import useAuth from '../../hooks/useAuth.jsx';
+import { useDispatch } from 'react-redux';
+import filter from 'leo-profanity';
 import imgUrl from '../../assets/Celebrator.jpg';
-import NavBar from '../common/NavBar.jsx';
-import { userSignup } from '../../store/apiSlice.jsx';
+import NavBar from '../NavBar.jsx';
+import { userSignup } from '../../store/apis/authApi.js';
+import { logIn } from '../../store/slices/authSlice.js';
+import routes from '../../routes.js';
 
 const initialValues = {
   username: '',
@@ -73,10 +76,10 @@ const Input = ({
 const FormInput = memo(forwardRef(Input));
 
 const SignupPage = () => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [signupFailed, setSignupFailed] = useState(false);
   const [signup] = userSignup();
-  const { auth } = useAuth();
   const inputRef = useRef();
   const navigate = useNavigate();
 
@@ -97,14 +100,13 @@ const SignupPage = () => {
     onSubmit: async (values) => {
       try {
         const signupData = await signup({
-          username: values.username.trim(),
+          username: filter.clean(values.username.trim()),
           password: values.password,
           confirmPassword: values.confirmPassword,
         }).unwrap();
         setSignupFailed(false);
-        localStorage.setItem('userId', JSON.stringify(signupData));
-        auth.logIn(values.username);
-        navigate('/', { replace: false });
+        dispatch(logIn(signupData));
+        navigate(routes.pages.getChatPage());
       } catch (err) {
         if (err.status === 409) {
           formik.errors.confirmPassword = t('signupPage.errors.409');

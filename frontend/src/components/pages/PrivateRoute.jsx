@@ -2,11 +2,11 @@ import {
   Navigate,
   Outlet,
 } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
+import { useSelector } from 'react-redux';
 import routes from '../../routes';
 
 const PrivateRoute = () => {
-  const { isAuthorized } = useAuth();
+  const { isAuthorized } = useSelector((state) => state.authSlice);
 
   return isAuthorized
     ? <Outlet />

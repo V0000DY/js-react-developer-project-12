@@ -7,22 +7,16 @@ import {
 import { memo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import NavBar from '../common/NavBar.jsx';
+import NavBar from '../NavBar.jsx';
 import Channels from '../channels/index.jsx';
 import ChatHead from '../chat/ChatHead.jsx';
 import Chat from '../chat/Chat.jsx';
 import ChatForm from '../chat/ChatForm.jsx';
-import {
-  getChannels,
-  getMessages,
-  selectChannelById,
-  selectMessagesByChannel,
-} from '../../store/apiSlice.jsx';
-import useAuth from '../../hooks/useAuth.jsx';
+import { getChannels, selectChannelById } from '../../store/apis/channelsApi.js';
+import { getMessages, selectMessagesByChannel } from '../../store/apis/messagesApi.js';
 
 const ChatPage = () => {
-  const currentChannelId = useSelector((state) => state.ui.currentChannelId);
-  const { auth } = useAuth();
+  const currentChannelId = useSelector((state) => state.uiSlice.currentChannelId);
   const { t } = useTranslation();
 
   const {
@@ -62,7 +56,7 @@ const ChatPage = () => {
     if (isMessagesLoadingError) {
       handleError(messagesError, 'messages');
     }
-  }, [isChannelsLoadingError, isMessagesLoadingError, channelsError, messagesError, auth, t]);
+  }, [isChannelsLoadingError, isMessagesLoadingError, channelsError, messagesError, t]);
 
   return (
     <div className="d-flex flex-column h-100">

@@ -6,12 +6,12 @@ import {
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { deleteChannel } from '../../store/apis/channelsApi.js';
 import {
-  deleteChannel,
   deleteMessage,
   getMessages,
   selectMessagesByChannel,
-} from '../../store/apiSlice';
+} from '../../store/apis/messagesApi.js';
 
 const Remove = ({ modalInfo, onHide }) => {
   const { channelId } = modalInfo;

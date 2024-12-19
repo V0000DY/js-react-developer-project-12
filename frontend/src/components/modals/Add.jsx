@@ -43,7 +43,7 @@ const Add = (props) => {
         };
         await createChannel(channel).unwrap();
         onHide();
-        toast.success(t('modals.rename.toasts.success'));
+        toast.success(t('modals.add.toasts.success'));
       } catch (err) {
         toast.error(t('modals.add.toasts.error') + err.data.message);
       }

@@ -18,7 +18,11 @@ const Chat = ({ messages, isMessagesLoading }) => {
 
   return (
     <div id="messages-box" className="chat-messages overflow-auto px-5" ref={messageBox}>
-      {isMessagesLoading && <Spinner />}
+      {isMessagesLoading && (
+        <div className="text-center">
+          <Spinner />
+        </div>
+      )}
       {messages && messages.map(renderMessage)}
     </div>
   );

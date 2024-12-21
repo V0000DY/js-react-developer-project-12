@@ -4,8 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import i18n from 'i18next';
 import filter from 'leo-profanity';
-import ru from './locales/ru.js';
-import en from './locales/en.js';
+import resources from './locales/index.js';
 import store from './store/index.js';
 import { ModalProvider } from './context/modalsProvider.jsx';
 import App from './App.jsx';
@@ -27,11 +26,6 @@ const init = async (socket) => {
   filter.list();
 
   const i18nInstance = i18n.createInstance();
-
-  const resources = {
-    ru,
-    en,
-  };
 
   await i18nInstance
     .use(initReactI18next)

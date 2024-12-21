@@ -1,40 +1,47 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
-const authData = JSON.parse(localStorage.getItem('authData'));
-let token; let username; let isAuthorized;
-
-if (authData) {
-  token = authData.token;
-  username = authData.username;
-  isAuthorized = true;
-} else {
-  token = null;
-  username = '';
-  isAuthorized = false;
-}
-
 const initialState = {
-  token,
-  username,
-  isAuthorized,
+  token: null,
+  username: '',
+  isAuthorized: false,
+};
+
+const getStorageData = () => {
+  try {
+    return JSON.parse(localStorage.getItem('authData'));
+  } catch (error) {
+    console.log('Ошибка авторизации. Не удалось получить данные из localStorage', error);
+    return null;
+  }
+};
+
+const getInialState = () => {
+  const storageData = getStorageData();
+
+  if (storageData) {
+    return {
+      ...storageData,
+      isAuthorized: true,
+    };
+  }
+  return initialState;
 };
 
 const authSlice = createSlice({
   name: 'authSlice',
-  initialState,
+  initialState: getInialState(),
   reducers: {
     logIn: (state, { payload }) => {
       localStorage.setItem('authData', JSON.stringify(payload));
-      state.isAuthorized = true;
-      state.token = payload.token;
-      state.username = payload.username;
+      Object.assign(state, {
+        ...payload,
+        isAuthorized: true,
+      });
     },
     logOut: (state) => {
       localStorage.removeItem('authData');
-      state.isAuthorized = false;
-      state.token = null;
-      state.username = '';
+      Object.assign(state, initialState);
     },
   },
 });

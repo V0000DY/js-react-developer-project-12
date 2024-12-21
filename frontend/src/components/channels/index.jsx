@@ -58,7 +58,7 @@ const Channels = ({
     <Col xs={4} md="2" className="border-end px-0 bg-light flex-column d-flex h-100">
       <Head showModal={showModal} />
       {isChannelsLoading && (
-        <div>
+        <div className="text-center">
           <Spinner />
         </div>
       )}

@@ -26,7 +26,7 @@ import filter from 'leo-profanity';
 import imgUrl from '../../assets/Celebrator.jpg';
 import NavBar from '../NavBar.jsx';
 import { userSignup } from '../../store/apis/authApi.js';
-import { logIn } from '../../store/slices/authSlice.js';
+import { logIn, setAuthError, resetAuthError } from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
 
 const initialValues = {
@@ -79,7 +79,7 @@ const SignupPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [signupFailed, setSignupFailed] = useState(false);
-  const [signup] = userSignup();
+  const [fetchSignupData] = userSignup();
   const inputRef = useRef();
   const navigate = useNavigate();
 
@@ -99,19 +99,21 @@ const SignupPage = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const signupData = await signup({
+        const signupData = await fetchSignupData({
           username: filter.clean(values.username.trim()),
           password: values.password,
           confirmPassword: values.confirmPassword,
         }).unwrap();
         setSignupFailed(false);
+        dispatch(resetAuthError());
         dispatch(logIn(signupData));
         navigate(routes.pages.getChatPage());
       } catch (err) {
+        setSignupFailed(true);
+        dispatch(setAuthError(err.data.message));
         if (err.status === 409) {
           formik.errors.confirmPassword = t('signupPage.errors.409');
           inputRef.current.select();
-          setSignupFailed(true);
         } else {
           toast.error(t('signupPage.errors.FETCH_ERROR'));
         }

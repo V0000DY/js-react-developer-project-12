@@ -1,17 +1,17 @@
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   token: null,
   username: '',
-  isAuthorized: false,
+  isError: false,
+  error: '',
 };
 
 const getStorageData = () => {
   try {
     return JSON.parse(localStorage.getItem('authData'));
   } catch (error) {
-    console.log('Ошибка авторизации. Не удалось получить данные из localStorage', error);
     return null;
   }
 };
@@ -19,13 +19,10 @@ const getStorageData = () => {
 const getInialState = () => {
   const storageData = getStorageData();
 
-  if (storageData) {
-    return {
-      ...storageData,
-      isAuthorized: true,
-    };
-  }
-  return initialState;
+  return {
+    ...initialState,
+    ...storageData,
+  };
 };
 
 const authSlice = createSlice({
@@ -34,21 +31,49 @@ const authSlice = createSlice({
   reducers: {
     logIn: (state, { payload }) => {
       localStorage.setItem('authData', JSON.stringify(payload));
-      Object.assign(state, {
-        ...payload,
-        isAuthorized: true,
-      });
+      Object.assign(state, payload);
     },
     logOut: (state) => {
       localStorage.removeItem('authData');
       Object.assign(state, initialState);
     },
+    setAuthError: (state, payload) => {
+      Object.assign(state, payload);
+    },
+    resetAuthError: (state) => {
+      Object.assign(state, { isError: false, error: '' });
+    },
   },
 });
+
+export const selectAuth = (state) => state.authSlice;
+
+export const selectUser = createSelector(
+  selectAuth,
+  (authState) => authState.username,
+);
+
+export const selectToken = createSelector(
+  selectAuth,
+  (authState) => authState.token,
+);
+
+export const selectIsAuthError = createSelector(
+  selectAuth,
+  (authState) => authState.isError,
+);
+
+export const selectIsAuth = createSelector(
+  selectToken,
+  selectIsAuthError,
+  (token, isError) => Boolean(token) && !isError,
+);
 
 export const {
   logIn,
   logOut,
+  setAuthError,
+  resetAuthError,
 } = authSlice.actions;
 
 export default authSlice.reducer;

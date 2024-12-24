@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 import NavBar from '../NavBar.jsx';
 import imgUrl from '../../assets/RockClimber.jpeg';
 import { userLogin } from '../../store/apis/authApi.js';
-import { logIn } from '../../store/slices/authSlice.js';
+import { logIn, setAuthError, resetAuthError } from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
 
 const initialValues = {
@@ -37,23 +37,24 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
-  const [login] = userLogin();
+  const [fetchLoginData] = userLogin();
   const inputRef = useRef();
 
   const formik = useFormik({
     initialValues,
     onSubmit: async (values) => {
       try {
-        const loginData = await login(values).unwrap();
+        const loginData = await fetchLoginData(values).unwrap();
         setAuthFailed(false);
+        dispatch(resetAuthError());
         dispatch(logIn((loginData)));
         navigate(routes.pages.getChatPage());
       } catch (err) {
         setAuthFailed(true);
+        dispatch(setAuthError(err.data.message));
         if (err.status === 401) {
           inputRef.current.select();
         } else {
-          console.log(err);
           toast.error(t('loginPage.errors.FETCH_ERROR'));
         }
       }

@@ -8,14 +8,14 @@ import {
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut } from '../store/slices/authSlice.js';
+import { logOut, selectIsAuth } from '../store/slices/authSlice.js';
 import routes from '../routes.js';
 
 const NavBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { isAuthorized } = useSelector((state) => state.authSlice);
+  const isAuthorized = useSelector(selectIsAuth);
 
   const onLogOut = () => {
     dispatch(logOut());

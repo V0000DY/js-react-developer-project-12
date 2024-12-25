@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 import NavBar from '../NavBar.jsx';
-import imgUrl from '../../assets/Observer.svg';
+import imgUrl from '../../assets/errorPageBanner.avif';
 import routes from '../../routes.js';
 
 const ErrorPage = () => {
@@ -14,7 +14,7 @@ const ErrorPage = () => {
       <div className="text-center">
         <Image
           alt={t('errorPage.main')}
-          className="h-25"
+          className="h-50"
           fluid
           src={imgUrl}
         />

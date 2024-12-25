@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import NavBar from '../NavBar.jsx';
-import imgUrl from '../../assets/RockClimber.jpeg';
+import imgUrl from '../../assets/loginBanner.jpg';
 import { userLogin } from '../../store/apis/authApi.js';
 import { resetAuthError, selectIsAuthError } from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
@@ -68,7 +68,7 @@ const LoginPage = () => {
             <Card className="shadow-sm">
               <CardBody className="row p-5">
                 <Col xs="12" md="6" className="d-flex align-items-center justify-content-center">
-                  <Image src={imgUrl} roundedCircle alt="Enter" />
+                  <Image src={imgUrl} roundedCircle fluid alt="Enter" />
                 </Col>
                 <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
                   <h1 className="text-center mb-4">{t('loginPage.main.title')}</h1>

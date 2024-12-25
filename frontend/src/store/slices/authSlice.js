@@ -30,10 +30,6 @@ const authSlice = createSlice({
   name: 'authSlice',
   initialState: getInialState(),
   reducers: {
-    logIn: (state, { payload }) => {
-      localStorage.setItem('authData', JSON.stringify(payload));
-      Object.assign(state, payload);
-    },
     logOut: (state) => {
       localStorage.removeItem('authData');
       Object.assign(state, initialState);
@@ -98,7 +94,6 @@ export const selectIsAuth = createSelector(
 );
 
 export const {
-  // logIn,
   logOut,
   setAuthError,
   resetAuthError,

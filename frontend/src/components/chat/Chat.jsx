@@ -1,4 +1,8 @@
 import { useRef, memo, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { getMessages, selectMessagesByChannel } from '../../store/apis/messagesApi.js';
 import Spinner from '../Spinner.jsx';
 import Message from './Message.jsx';
 
@@ -8,8 +12,28 @@ const renderMessage = ({
   body,
 }) => <Message key={id} username={username} body={body} />;
 
-const Chat = ({ messages, isMessagesLoading }) => {
+const Chat = () => {
+  const { t } = useTranslation();
+  const currentChannelId = useSelector((state) => state.uiSlice.currentChannelId);
+  const {
+    messagesFromChannel,
+    isLoading: isMessagesLoading,
+    isError: isMessagesLoadingError,
+    error: messagesError,
+  } = getMessages(undefined, {
+    selectFromResult: (result) => ({
+      ...result,
+      messagesFromChannel: selectMessagesByChannel(result, currentChannelId),
+    }),
+  });
+
   const messageBox = useRef(null);
+
+  useEffect(() => {
+    if (isMessagesLoadingError) {
+      toast.error(t('messages.error', { error: messagesError.error }));
+    }
+  }, [isMessagesLoadingError, messagesError, t]);
 
   useEffect(() => {
     const { scrollHeight } = messageBox.current;
@@ -23,7 +47,7 @@ const Chat = ({ messages, isMessagesLoading }) => {
           <Spinner />
         </div>
       )}
-      {messages && messages.map(renderMessage)}
+      {messagesFromChannel && messagesFromChannel.map(renderMessage)}
     </div>
   );
 };

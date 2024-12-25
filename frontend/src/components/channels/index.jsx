@@ -1,5 +1,7 @@
-import { memo, useContext } from 'react';
-import { useDispatch } from 'react-redux';
+import { memo, useContext, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import cn from 'classnames';
 
 import { Col } from 'react-bootstrap';
@@ -11,15 +13,27 @@ import CustomChannelElement from './CustomChannelElement.jsx';
 
 import { setCurrentChannelId } from '../../store/slices/uiSlice.js';
 import { ModalContext } from '../../context/modalsProvider.jsx';
+import { getChannels, selectChannelById } from '../../store/apis/channelsApi.js';
 
-const Channels = ({
-  currentChannel,
-  channels,
-  isChannelsLoading,
-}) => {
+const Channels = ({ size }) => {
   const dispatch = useDispatch();
   const modal = useContext(ModalContext);
   const { showModal } = modal;
+  const { currentChannelId } = useSelector((state) => state.uiSlice);
+  const { t } = useTranslation();
+
+  const {
+    data: channels = [],
+    currentChannel,
+    isLoading: isChannelsLoading,
+    isError: isChannelsLoadingError,
+    error: channelsError,
+  } = getChannels(undefined, {
+    selectFromResult: (result) => ({
+      ...result,
+      currentChannel: selectChannelById(result, currentChannelId),
+    }),
+  });
 
   const renderChannel = (id, name, removable) => {
     const buttonClass = cn({
@@ -54,8 +68,14 @@ const Channels = ({
     );
   };
 
+  useEffect(() => {
+    if (isChannelsLoadingError) {
+      toast.error(t('channels.error', { error: channelsError.error }));
+    }
+  }, [isChannelsLoadingError, channelsError, t]);
+
   return (
-    <Col xs={4} md="2" className="border-end px-0 bg-light flex-column d-flex h-100">
+    <Col sm={size} lg="2" className="border-end px-0 bg-light flex-column d-flex h-100">
       <Head showModal={showModal} />
       {isChannelsLoading && (
         <div className="text-center">

@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import filter from 'leo-profanity';
-import imgUrl from '../../assets/Celebrator.jpg';
+import imgUrl from '../../assets/registrationBanner.jpg';
 import NavBar from '../NavBar.jsx';
 import { userSignup } from '../../store/apis/authApi.js';
 import { resetAuthError, selectIsAuthError } from '../../store/slices/authSlice.js';

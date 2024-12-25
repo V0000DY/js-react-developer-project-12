@@ -12,7 +12,8 @@ import filter from 'leo-profanity';
 import { addMessage } from '../../store/apis/messagesApi.js';
 import ChatInputBtn from './ChatInputBtn.jsx';
 
-const MessageForm = ({ currentChannel }) => {
+const MessageForm = () => {
+  const currentChannelId = useSelector((state) => state.uiSlice.currentChannelId);
   const [createMessage] = addMessage();
   const [inputText, setInputText] = useState('');
   const { username } = useSelector((state) => state.authSlice);
@@ -24,7 +25,7 @@ const MessageForm = ({ currentChannel }) => {
     const message = {
       body: filter.clean(inputText),
       username,
-      channelId: currentChannel.id,
+      channelId: currentChannelId,
     };
     try {
       await createMessage(message).unwrap();

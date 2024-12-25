@@ -74,7 +74,7 @@ const en = {
       },
     },
     navBarComp: {
-      title: 'Hexlet Chat',
+      title: 'Simple Chat',
       logOutButton: 'Log out',
       toggleRuLang: 'Russian',
       toggleEnLang: 'English',

@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { authApi } from '../apis/authApi';
 
 const initialState = {
   token: null,
@@ -44,6 +45,28 @@ const authSlice = createSlice({
       Object.assign(state, { isError: false, error: '' });
     },
   },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      isAnyOf(authApi.endpoints.login.matchFulfilled, authApi.endpoints.signup.matchFulfilled),
+      (state, { payload }) => {
+        localStorage.setItem('authData', JSON.stringify(payload));
+        Object.assign(state, {
+          ...payload,
+          isError: false,
+          error: '',
+        });
+      },
+    )
+      .addMatcher(
+        isAnyOf(authApi.endpoints.login.matchRejected, authApi.endpoints.signup.matchRejected),
+        (state, { payload }) => {
+          Object.assign(state, {
+            isError: true,
+            error: payload,
+          });
+        },
+      );
+  },
 });
 
 export const selectAuth = (state) => state.authSlice;
@@ -63,6 +86,11 @@ export const selectIsAuthError = createSelector(
   (authState) => authState.isError,
 );
 
+export const selectAuthError = createSelector(
+  selectAuth,
+  (authState) => authState.error,
+);
+
 export const selectIsAuth = createSelector(
   selectToken,
   selectIsAuthError,
@@ -70,7 +98,7 @@ export const selectIsAuth = createSelector(
 );
 
 export const {
-  logIn,
+  // logIn,
   logOut,
   setAuthError,
   resetAuthError,

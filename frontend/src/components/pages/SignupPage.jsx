@@ -3,7 +3,6 @@ import React, {
   memo,
   useEffect,
   useRef,
-  useState,
 } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -21,12 +20,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import filter from 'leo-profanity';
 import imgUrl from '../../assets/Celebrator.jpg';
 import NavBar from '../NavBar.jsx';
 import { userSignup } from '../../store/apis/authApi.js';
-import { logIn, setAuthError, resetAuthError } from '../../store/slices/authSlice.js';
+import { resetAuthError, selectIsAuthError } from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
 
 const initialValues = {
@@ -78,7 +77,7 @@ const FormInput = memo(forwardRef(Input));
 const SignupPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [signupFailed, setSignupFailed] = useState(false);
+  const authFailed = useSelector(selectIsAuthError);
   const [fetchSignupData] = userSignup();
   const inputRef = useRef();
   const navigate = useNavigate();
@@ -99,21 +98,16 @@ const SignupPage = () => {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const signupData = await fetchSignupData({
+        await fetchSignupData({
           username: filter.clean(values.username.trim()),
           password: values.password,
           confirmPassword: values.confirmPassword,
         }).unwrap();
-        setSignupFailed(false);
-        dispatch(resetAuthError());
-        dispatch(logIn(signupData));
         navigate(routes.pages.getChatPage());
       } catch (err) {
-        setSignupFailed(true);
-        dispatch(setAuthError(err.data.message));
+        inputRef.current.select();
         if (err.status === 409) {
           formik.errors.confirmPassword = t('signupPage.errors.409');
-          inputRef.current.select();
         } else {
           toast.error(t('signupPage.errors.FETCH_ERROR'));
         }
@@ -123,7 +117,8 @@ const SignupPage = () => {
 
   useEffect(() => {
     inputRef.current.focus();
-  }, []);
+    dispatch(resetAuthError());
+  }, [dispatch]);
 
   return (
     <div className="d-flex flex-column vh-100 bg-light">
@@ -143,7 +138,7 @@ const SignupPage = () => {
                     className="mb-3"
                     controlId="username"
                     label={t('signupPage.main.inputs.username')}
-                    isInvalid={(formik.errors.username && formik.touched.username) || signupFailed}
+                    isInvalid={(formik.errors.username && formik.touched.username) || authFailed}
                     onChange={formik.handleChange}
                     value={formik.values.username}
                     autoComplete="username"
@@ -158,7 +153,7 @@ const SignupPage = () => {
                     className="mb-4"
                     controlId="password"
                     label={t('signupPage.main.inputs.password')}
-                    isInvalid={(formik.errors.password && formik.touched.password) || signupFailed}
+                    isInvalid={(formik.errors.password && formik.touched.password) || authFailed}
                     onChange={formik.handleChange}
                     value={formik.values.password}
                     autoComplete="new-password"

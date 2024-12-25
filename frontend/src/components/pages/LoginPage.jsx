@@ -2,7 +2,6 @@ import React, {
   memo,
   useEffect,
   useRef,
-  useState,
 } from 'react';
 import { useFormik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,11 +19,11 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import NavBar from '../NavBar.jsx';
 import imgUrl from '../../assets/RockClimber.jpeg';
 import { userLogin } from '../../store/apis/authApi.js';
-import { logIn, setAuthError, resetAuthError } from '../../store/slices/authSlice.js';
+import { resetAuthError, selectIsAuthError } from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
 
 const initialValues = {
@@ -35,26 +34,20 @@ const initialValues = {
 const LoginPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [authFailed, setAuthFailed] = useState(false);
   const navigate = useNavigate();
   const [fetchLoginData] = userLogin();
   const inputRef = useRef();
+  const authFailed = useSelector(selectIsAuthError);
 
   const formik = useFormik({
     initialValues,
     onSubmit: async (values) => {
       try {
-        const loginData = await fetchLoginData(values).unwrap();
-        setAuthFailed(false);
-        dispatch(resetAuthError());
-        dispatch(logIn((loginData)));
+        await fetchLoginData(values).unwrap();
         navigate(routes.pages.getChatPage());
       } catch (err) {
-        setAuthFailed(true);
-        dispatch(setAuthError(err.data.message));
-        if (err.status === 401) {
-          inputRef.current.select();
-        } else {
+        inputRef.current.select();
+        if (err.status === 'FETCH_ERROR') {
           toast.error(t('loginPage.errors.FETCH_ERROR'));
         }
       }
@@ -63,7 +56,8 @@ const LoginPage = () => {
 
   useEffect(() => {
     inputRef.current.focus();
-  }, []);
+    dispatch(resetAuthError());
+  }, [dispatch]);
 
   return (
     <div className="d-flex flex-column vh-100">

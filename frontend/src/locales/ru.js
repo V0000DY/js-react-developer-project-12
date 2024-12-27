@@ -22,6 +22,10 @@ const ru = {
         delete: 'Удалить',
         rename: 'Переименовать',
       },
+      sideBar: {
+        title: 'Выберите канал',
+        button: 'Каналы',
+      },
       channelsList: {
         title: 'Каналы',
         addButton: '+',

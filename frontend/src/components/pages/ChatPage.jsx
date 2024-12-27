@@ -9,7 +9,7 @@ import Channels from '../channels/index.jsx';
 import ChatHead from '../chat/ChatHead.jsx';
 import Chat from '../chat/Chat.jsx';
 import ChatForm from '../chat/ChatForm.jsx';
-import SideBar from '../channels/Offcanvas.jsx';
+import SideBar from '../channels/MobileSideBar.jsx';
 
 const ChatPage = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 576);

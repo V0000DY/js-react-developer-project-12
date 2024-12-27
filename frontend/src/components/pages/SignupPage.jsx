@@ -25,7 +25,12 @@ import filter from 'leo-profanity';
 import imgUrl from '../../assets/registrationBanner.jpg';
 import NavBar from '../NavBar.jsx';
 import { userSignup } from '../../store/apis/authApi.js';
-import { resetAuthError, selectIsAuthError } from '../../store/slices/authSlice.js';
+import {
+  selectIsAuth,
+  selectAuthError,
+  selectIsAuthError,
+  resetAuthError,
+} from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
 
 const initialValues = {
@@ -77,7 +82,9 @@ const FormInput = memo(forwardRef(Input));
 const SignupPage = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const authFailed = useSelector(selectIsAuthError);
+  const isAuth = useSelector(selectIsAuth);
+  const isAuthError = useSelector(selectIsAuthError);
+  const authError = useSelector(selectAuthError);
   const [fetchSignupData] = userSignup();
   const inputRef = useRef();
   const navigate = useNavigate();
@@ -116,9 +123,25 @@ const SignupPage = () => {
   });
 
   useEffect(() => {
-    inputRef.current.focus();
     dispatch(resetAuthError());
-  }, [dispatch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    inputRef.current.select();
+    if (isAuth) {
+      navigate(routes.pages.getChatPage());
+    }
+
+    if (authError.status === 409) {
+      formik.errors.confirmPassword = t('signupPage.errors.409');
+    }
+
+    if (authError.status === 'FETCH_ERROR') {
+      toast.error(t('signupPage.errors.FETCH_ERROR'));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuth, authError, navigate, t]);
 
   return (
     <div className="d-flex flex-column vh-100 bg-light">
@@ -138,7 +161,7 @@ const SignupPage = () => {
                     className="mb-3"
                     controlId="username"
                     label={t('signupPage.main.inputs.username')}
-                    isInvalid={(formik.errors.username && formik.touched.username) || authFailed}
+                    isInvalid={formik.touched.username && (formik.errors.username || isAuthError)}
                     onChange={formik.handleChange}
                     value={formik.values.username}
                     autoComplete="username"
@@ -153,7 +176,7 @@ const SignupPage = () => {
                     className="mb-4"
                     controlId="password"
                     label={t('signupPage.main.inputs.password')}
-                    isInvalid={(formik.errors.password && formik.touched.password) || authFailed}
+                    isInvalid={formik.touched.password && (formik.errors.password || isAuthError)}
                     onChange={formik.handleChange}
                     value={formik.values.password}
                     autoComplete="new-password"
@@ -167,7 +190,10 @@ const SignupPage = () => {
                     className="mb-4"
                     controlId="confirmPassword"
                     label={t('signupPage.main.inputs.confirmPassword')}
-                    isInvalid={formik.errors.confirmPassword && formik.touched.confirmPassword}
+                    isInvalid={
+                      formik.touched.confirmPassword
+                      && (formik.errors.confirmPassword || isAuthError)
+                    }
                     onChange={formik.handleChange}
                     value={formik.values.confirmPassword}
                     autoComplete="new-password"

@@ -23,7 +23,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import NavBar from '../NavBar.jsx';
 import imgUrl from '../../assets/loginBanner.jpg';
 import { userLogin } from '../../store/apis/authApi.js';
-import { resetAuthError, selectIsAuthError } from '../../store/slices/authSlice.js';
+import {
+  selectIsAuth,
+  selectAuthError,
+  selectIsAuthError,
+  resetAuthError,
+} from '../../store/slices/authSlice.js';
 import routes from '../../routes.js';
 
 const initialValues = {
@@ -37,27 +42,32 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [fetchLoginData] = userLogin();
   const inputRef = useRef();
-  const authFailed = useSelector(selectIsAuthError);
+  const isAuthError = useSelector(selectIsAuthError);
+  const authError = useSelector(selectAuthError);
+  const isAuth = useSelector(selectIsAuth);
 
   const formik = useFormik({
     initialValues,
     onSubmit: async (values) => {
-      try {
-        await fetchLoginData(values).unwrap();
-        navigate(routes.pages.getChatPage());
-      } catch (err) {
-        inputRef.current.select();
-        if (err.status === 'FETCH_ERROR') {
-          toast.error(t('loginPage.errors.FETCH_ERROR'));
-        }
-      }
+      await fetchLoginData(values);
     },
   });
 
   useEffect(() => {
-    inputRef.current.focus();
     dispatch(resetAuthError());
-  }, [dispatch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    inputRef.current.select();
+    if (isAuth) {
+      navigate(routes.pages.getChatPage());
+    }
+
+    if (authError.status === 'FETCH_ERROR') {
+      toast.error(t('loginPage.errors.FETCH_ERROR'));
+    }
+  }, [isAuth, authError, navigate, t, dispatch]);
 
   return (
     <div className="d-flex flex-column vh-100">
@@ -79,7 +89,10 @@ const LoginPage = () => {
                       label={t('loginPage.main.inputs.username.label')}
                     >
                       <Form.Control
-                        isInvalid={authFailed}
+                        isInvalid={
+                          formik.touched.username
+                          && (formik.errors.username || isAuthError)
+                        }
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.username}
@@ -99,7 +112,7 @@ const LoginPage = () => {
                       label={t('loginPage.main.inputs.password.label')}
                     >
                       <Form.Control
-                        isInvalid={authFailed}
+                        isInvalid={formik.touched.password && isAuthError}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.password}

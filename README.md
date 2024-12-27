@@ -1,5 +1,4 @@
-### Hexlet tests and linter status:
-[![Actions Status](https://github.com/V0000DY/js-react-developer-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/V0000DY/js-react-developer-project-12/actions)
+### Linter status:
 [![Actions Status](https://github.com/V0000DY/js-react-developer-project-12/actions/workflows/eslint-check.yml/badge.svg)](https://github.com/V0000DY/js-react-developer-project-12/actions)
 
 # Simple Chat Application

@@ -15,7 +15,7 @@ import { setCurrentChannelId } from '../../store/slices/uiSlice.js';
 import { ModalContext } from '../../context/modalsProvider.jsx';
 import { getChannels, selectChannelById } from '../../store/apis/channelsApi.js';
 
-const Channels = ({ size }) => {
+const Channels = ({ size, handleCloseSideBar = null }) => {
   const dispatch = useDispatch();
   const modal = useContext(ModalContext);
   const { showModal } = modal;
@@ -42,6 +42,9 @@ const Channels = ({ size }) => {
 
     const handleSwitchChannel = () => {
       dispatch(setCurrentChannelId(id));
+      if (handleCloseSideBar) {
+        handleCloseSideBar();
+      }
     };
 
     return (

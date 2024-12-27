@@ -1,6 +1,6 @@
 const en = {
   translation: {
-    messagesTab: {
+    messages: {
       messageForm: {
         error: 'An error occurred while sending your message: ',
       },
@@ -15,10 +15,14 @@ const en = {
       },
       error: 'An error occurred while retrieving the list of messages: {{error}}. Please update your request later.',
     },
-    channelsTab: {
+    channels: {
       dropdownMenu: {
         delete: 'Delete',
         rename: 'Rename',
+      },
+      sideBar: {
+        title: 'Choose a channel',
+        button: 'Channels',
       },
       channelsList: {
         title: 'Channels',

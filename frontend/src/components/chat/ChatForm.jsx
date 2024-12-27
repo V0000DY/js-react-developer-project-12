@@ -45,7 +45,7 @@ const MessageForm = () => {
   });
 
   return (
-    <div className="mt-auto px-5 py-3">
+    <div className="mt-auto px-3 py-3">
       <Form noValidate className="py-1 border rounded-2" onSubmit={handleSubmitMessage}>
         <InputGroup hasValidation>
           <Form.Control

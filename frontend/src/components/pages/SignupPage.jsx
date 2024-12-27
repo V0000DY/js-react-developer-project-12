@@ -104,28 +104,13 @@ const SignupPage = () => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      try {
-        await fetchSignupData({
-          username: filter.clean(values.username.trim()),
-          password: values.password,
-          confirmPassword: values.confirmPassword,
-        }).unwrap();
-        navigate(routes.pages.getChatPage());
-      } catch (err) {
-        inputRef.current.select();
-        if (err.status === 409) {
-          formik.errors.confirmPassword = t('signupPage.errors.409');
-        } else {
-          toast.error(t('signupPage.errors.FETCH_ERROR'));
-        }
-      }
+      await fetchSignupData({
+        username: filter.clean(values.username.trim()),
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      });
     },
   });
-
-  useEffect(() => {
-    dispatch(resetAuthError());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     inputRef.current.select();
@@ -139,9 +124,11 @@ const SignupPage = () => {
 
     if (authError.status === 'FETCH_ERROR') {
       toast.error(t('signupPage.errors.FETCH_ERROR'));
+      dispatch(resetAuthError());
     }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuth, authError, navigate, t]);
+  }, [isAuth, authError, navigate, t, dispatch]);
 
   return (
     <div className="d-flex flex-column vh-100 bg-light">

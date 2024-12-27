@@ -54,11 +54,6 @@ const LoginPage = () => {
   });
 
   useEffect(() => {
-    dispatch(resetAuthError());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     inputRef.current.select();
     if (isAuth) {
       navigate(routes.pages.getChatPage());
@@ -66,6 +61,7 @@ const LoginPage = () => {
 
     if (authError.status === 'FETCH_ERROR') {
       toast.error(t('loginPage.errors.FETCH_ERROR'));
+      dispatch(resetAuthError());
     }
   }, [isAuth, authError, navigate, t, dispatch]);
 

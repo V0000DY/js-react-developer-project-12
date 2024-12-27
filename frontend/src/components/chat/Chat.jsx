@@ -41,7 +41,7 @@ const Chat = () => {
   });
 
   return (
-    <div id="messages-box" className="chat-messages overflow-auto px-5" ref={messageBox}>
+    <div id="messages-box" className="chat-messages overflow-auto px-3" ref={messageBox}>
       {isMessagesLoading && (
         <div className="text-center">
           <Spinner />
